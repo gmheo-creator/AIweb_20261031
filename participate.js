@@ -286,7 +286,7 @@
         store.set("poll:mine", picked);
         msg.textContent = "";
         updatePoll();
-        toast(mine ? "선택을 바꿨습니다." : "투표해 주셔서 감사합니다! 🌸");
+        toast(mine ? "선택을 바꿨습니다." : "투표해 주셔서 감사합니다!");
       } catch (err) {
         msg.textContent = `투표를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요. (${err.message})`;
         msg.classList.add("error");
@@ -855,7 +855,7 @@
     dialog.innerHTML = `
       <div class="popup-body">
         <button class="popup-x" type="button" data-close aria-label="닫기">×</button>
-        <div class="popup-art" aria-hidden="true">🌸</div>
+        <div class="popup-art" aria-hidden="true">🎓</div>
         <h2 id="popup-title">${esc(PU.title)}</h2>
         <p>${esc(PU.text)}</p>
         ${PU.points?.length ? `<ul>${PU.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
@@ -895,7 +895,7 @@
     resize();
     window.addEventListener("resize", resize);
 
-    const colors = ["#f2b5d0", "#e07aa8", "#a58bd8", "#7a5bb5", "#ffc95c", "#ff8fb8", "#c9b6ff"];
+    const colors = ["#3e4572", "#5a6190", "#848bb4", "#aeb4d2", "#c3c8de", "#9aa1c6", "#d9b46a"];
     const pick = () => colors[Math.floor(Math.random() * colors.length)];
     const G = 0.16;
     const rockets = [];

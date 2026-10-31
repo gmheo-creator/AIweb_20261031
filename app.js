@@ -393,7 +393,7 @@
       const upcoming = weeks.find((x) => x.date > selected);
       html += `
         <div class="panel-empty">
-          <span aria-hidden="true">🌸</span>
+          <span aria-hidden="true">📅</span>
           <p>이날은 수업이 없습니다.</p>
           ${upcoming ? `<button class="link-btn" type="button" data-jump="${upcoming.key}">다음 수업: ${upcoming.no}주차 · ${fmtDate(upcoming.date)} →</button>` : ""}
         </div>`;
@@ -647,20 +647,4 @@
 
   // participate.js 에서 함께 쓰는 값과 도우미
   window.SITE = { esc, $, sectionHead, reduceMotion, weeks, dateKey, parseDate, withTime, fmtDate, fmtDateTime, countdownHTML };
-
-  // ── 벚꽃잎 장식 ───────────────────────────────────
-  const petals = $(".petals");
-  if (petals && !reduceMotion) {
-    for (let i = 0; i < 14; i++) {
-      const p = document.createElement("span");
-      p.className = "petal";
-      const size = 8 + Math.random() * 10;
-      p.style.left = `${Math.random() * 100}%`;
-      p.style.width = `${size}px`;
-      p.style.height = `${size * 0.8}px`;
-      p.style.animationDuration = `${9 + Math.random() * 8}s`;
-      p.style.animationDelay = `${-Math.random() * 15}s`;
-      petals.appendChild(p);
-    }
-  }
 })();

@@ -75,7 +75,7 @@ window.SITE_CONFIG = {
     ],
     benefitsHeading: "이 강의의 장점",
     benefits: [
-      { icon: "🌸", title: "실습 중심 수업", text: "매주 AI 도구로 수업 자료를 직접 만들고, 동료와 바로 공유하며 피드백을 받습니다." },
+      { icon: "🛠️", title: "실습 중심 수업", text: "매주 AI 도구로 수업 자료를 직접 만들고, 동료와 바로 공유하며 피드백을 받습니다." },
       { icon: "🤖", title: "AI 활용 수업 설계", text: "생성형 AI로 학습 목표·강의계획서·활동지를 설계하는 전 과정을 단계별로 익힙니다." },
       { icon: "🎤", title: "모의 강의 코칭", text: "15분 모의 강의를 촬영하고, 교수자와 동료의 구체적인 피드백으로 전달력을 다듬습니다." },
       { icon: "⚖️", title: "AI 윤리와 평가", text: "AI 시대의 학업 윤리, 과제 설계, 공정한 평가 기준을 사례 중심으로 다룹니다." },
@@ -305,7 +305,7 @@ window.SITE_CONFIG = {
     heading: "수강 신청서",
     lead: "* 표시는 필수 항목입니다. 제출 후 선발 결과는 이메일로 안내드립니다.",
     submitLabel: "신청서 제출하기",
-    successTitle: "신청서가 접수되었습니다 🌸",
+    successTitle: "신청서가 접수되었습니다",
     successText: "선발 결과는 입력하신 이메일로 안내드릴게요.",
     fields: [
       { name: "name", label: "이름", type: "text", required: true, placeholder: "홍길동" },
@@ -351,7 +351,7 @@ window.SITE_CONFIG = {
   // ── 첫 방문 폭죽 ────────────────────────────────────────────
   welcome: {
     fireworks: true,
-    message: "처음 오신 것을 환영합니다! 🌸",
+    message: "처음 오신 것을 환영합니다!",
   },
 
   // ── 자주 묻는 질문 ───────────────────────────────────────────
