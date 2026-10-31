@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>예비교수자 과정</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문 바로가기</a>
+
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="맨 위로">
+        <span class="brand-mark" aria-hidden="true">🌸</span>
+        <span class="brand-text">
+          <strong data-bind="site.shortTitle"></strong>
+          <small data-bind="site.organization"></small>
+        </span>
+      </a>
+      <nav class="site-nav" id="site-nav" aria-label="주요 메뉴"></nav>
+      <div class="header-tools">
+        <button class="admin-lock" type="button" id="admin-lock" aria-label="관리자 화면 열기" title="관리자">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm3 7a1.5 1.5 0 0 1 .75 2.8V18a.75.75 0 0 1-1.5 0v-1.2A1.5 1.5 0 0 1 12 14Z"/></svg>
+        </button>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="메뉴 열기">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="petals" aria-hidden="true"></div>
+      <div class="container hero-inner">
+        <p class="eyebrow" data-bind="site.badge"></p>
+        <h1 data-bind="site.title"></h1>
+        <p class="hero-subtitle" data-bind="site.subtitle"></p>
+        <p class="hero-desc" data-bind="site.description"></p>
+        <div class="hero-actions" id="hero-actions"></div>
+      </div>
+    </section>
+
+    <div class="container key-info" id="key-info"></div>
+    <section class="container notice-board" id="notice" hidden></section>
+
+    <section class="section" id="about"></section>
+    <section class="section section-tint" id="curriculum"></section>
+    <section class="section" id="schedule"></section>
+    <section class="section section-tint" id="poll"></section>
+    <section class="section" id="tools"></section>
+    <section class="section section-tint" id="enroll"></section>
+    <section class="section section-tint section-flush" id="apply"></section>
+    <section class="section" id="student"></section>
+    <section class="section section-tint" id="faq"></section>
+  </main>
+
+  <footer class="site-footer" id="instructor"></footer>
+
+  <button class="to-top" type="button" aria-label="맨 위로 이동">↑</button>
+
+  <dialog class="popup" id="welcome-popup" aria-labelledby="popup-title"></dialog>
+  <dialog class="admin-login" id="admin-login" aria-labelledby="admin-login-title"></dialog>
+  <dialog class="admin-panel" id="admin-panel" aria-labelledby="admin-title"></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script src="participate.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
