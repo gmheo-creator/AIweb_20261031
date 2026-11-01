@@ -22,6 +22,7 @@
   --purple-600: #3e4572;
   --ink: #1e2235;
   --ink-soft: #5c6073;
+  --navy: #14254f; /* 섹션 제목 (진한 남색) */
 
   --bg: var(--pink-50);
   --surface: #ffffff;
@@ -90,6 +91,8 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
   background: var(--gradient); border-radius: var(--radius-sm);
   color: #fff; font-size: 14px; font-weight: 800; letter-spacing: .06em;
 }
+.brand-mark.has-img { background: #fff; border: 1px solid var(--border); overflow: hidden; }
+.brand-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
 .brand-text strong { font-size: 17px; font-weight: 800; }
 .brand-text small { font-size: 12px; color: var(--ink-soft); }
@@ -101,6 +104,31 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
   display: grid; place-items: center; background: #fff; color: var(--ink-soft); transition: color .2s, background .2s;
 }
 .admin-lock:hover { color: var(--accent); background: var(--purple-100); }
+/* 헤더: 학습자 로그인 / 로그인한 이름 */
+.header-user { display: flex; align-items: center; gap: 6px; }
+.hu-btn {
+  height: 40px; padding: 0 14px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--ink-soft);
+  font: inherit; font-size: 14px; font-weight: 500; white-space: nowrap; transition: color .2s, background .2s, border-color .2s;
+}
+.hu-btn:hover { color: var(--accent); background: var(--purple-100); }
+.hu-btn.hu-login { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 700; }
+.hu-btn.hu-login:hover { background: var(--purple-600); border-color: var(--purple-600); color: #fff; }
+.hu-name {
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 10px 0 4px; border-radius: 999px;
+  text-decoration: none; color: var(--ink); font-size: 14px; font-weight: 700; white-space: nowrap;
+}
+.hu-name:hover { background: var(--purple-100); }
+.hu-avatar {
+  width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--navy); color: #fff; font-size: 14px; font-weight: 700;
+}
+.login-hint { text-align: center; color: var(--ink-soft); margin: 0; line-height: 1.7; }
+@media (max-width: 560px) {
+  .hu-btn { padding: 0 10px; }
+  .hu-login span, .hu-text { display: none; }
+  .hu-name { padding: 0 4px; }
+}
 .site-nav a {
   text-decoration: none; font-weight: 500; font-size: 15px; color: var(--ink-soft); white-space: nowrap;
   padding: 8px 12px; border-radius: var(--radius-sm); transition: background .2s, color .2s;
@@ -209,9 +237,23 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .section { padding: 88px 0; }
 .section { background: #fff; }
 .section-tint { background: var(--pink-50); }
+/* 섹션 바탕: 파스텔 푸른색 → 하얀색 → 분홍색 → 노란색 → 초록색 순서로 반복 (index.html 에서 지정)
+   각 섹션은 자기 색에서 다음 섹션 색으로 이어지는 그라데이션이라 경계 없이 부드럽게 넘어갑니다. */
+:root {
+  --bg-blue: #eaf2fd;
+  --bg-white: #ffffff;
+  --bg-pink: #fdeef3;
+  --bg-yellow: #fef8e4;
+  --bg-green: #ebf7ef;
+}
+.bg-blue { background: linear-gradient(180deg, var(--bg-blue), var(--bg-white)); }
+.bg-white { background: linear-gradient(180deg, var(--bg-white), var(--bg-pink)); }
+.bg-pink { background: linear-gradient(180deg, var(--bg-pink), var(--bg-yellow)); }
+.bg-yellow { background: linear-gradient(180deg, var(--bg-yellow), var(--bg-green)); }
+.bg-green { background: linear-gradient(180deg, var(--bg-green), var(--bg-blue)); }
 /* 제목은 왼쪽 정렬 + 위에 자간 넓은 작은 영문 라벨 */
 .section-head { text-align: left; margin-bottom: 40px; }
-.section-head h2 { font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: .01em; }
+.section-head h2 { font-size: clamp(26px, 4vw, 34px); font-weight: 800; letter-spacing: .01em; color: var(--navy); }
 .section-head h2::before {
   content: "FUTURE FACULTY"; display: block; margin-bottom: 8px;
   font-size: 12px; font-weight: 800; letter-spacing: .32em; color: var(--pink-500);
@@ -268,6 +310,13 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 }
 .objectives-list:hover { transform: none; }
 
+/* 학습활동: 3 × 2 카드 */
+.activities { margin-top: 64px; }
+.activities h3 { font-size: 22px; font-weight: 800; margin-bottom: 18px; }
+.activity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 900px) { .activity-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .activity-grid { grid-template-columns: 1fr; } }
+
 .slider { margin-top: 64px; }
 .slider-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
 .slider-head h3 { font-size: 22px; font-weight: 800; }
@@ -289,7 +338,8 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .slider-track::-webkit-scrollbar { display: none; }
 .slide { scroll-snap-align: start; }
 .slide:hover { transform: none; }
-.slide h4 { font-size: 19px; font-weight: 700; margin: 0 0 8px; }
+.slide h4, .activity-card h4 { font-size: 19px; font-weight: 700; margin: 0 0 8px; }
+.activity-card p { margin: 0; color: var(--ink-soft); font-size: 15px; line-height: 1.7; }
 .slider-dots { display: flex; justify-content: center; gap: 0; }
 /* 점은 작게 보이되, 누르는 영역은 32px 로 넉넉하게 */
 .slider-dots button {
@@ -509,6 +559,80 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .apply { margin-top: 24px; text-align: center; }
 .apply small { display: block; margin-top: 10px; color: var(--ink-soft); }
 
+/* 교재 및 참고자료 */
+.materials-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.materials-grid li { display: flex; gap: 14px; align-items: flex-start; }
+.materials-grid li:hover { transform: none; }
+.materials-grid p { margin: 2px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+/* 과제 및 평가 */
+.eval-card { display: grid; gap: 22px; }
+.eval-card:hover { transform: none; }
+.eval-bar { display: flex; height: 34px; border-radius: 999px; overflow: hidden; }
+.eval-seg { display: grid; place-items: center; min-width: 0; color: #fff; font-size: 13px; font-weight: 700; }
+.eval-c0 { background: #5b74c9; } .eval-c1 { background: #e07ba0; } .eval-c2 { background: #e2aa3b; }
+.eval-c3 { background: #4fa77a; } .eval-c4 { background: #8a6fcf; } .eval-c5 { background: #3f9db8; }
+.eval-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.eval-list li { display: flex; align-items: center; gap: 14px; padding: 12px 4px; border-bottom: 1px solid var(--border); }
+.eval-list li:last-child { border-bottom: 0; }
+.eval-dot { flex: none; width: 14px; height: 14px; border-radius: 50%; }
+.eval-text { flex: 1; min-width: 0; }
+.eval-text p { margin: 2px 0 0; color: var(--ink-soft); font-size: 15px; }
+.eval-pct { flex: none; font-size: 22px; font-weight: 800; color: var(--navy); }
+.eval-total { margin: 0; text-align: right; color: var(--ink-soft); }
+.eval-total strong { color: var(--navy); }
+.eval-total.warn, .eval-total.warn strong { color: #c23a5e; }
+.admin-edit-btn { margin-top: 14px; }
+
+/* 실시간 퀴즈 (학습자 공간) */
+.quiz-card { margin-bottom: 20px; border-top: 4px solid var(--navy); }
+.quiz-card:hover { transform: none; }
+.quiz-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.quiz-head .card-title { margin: 0; }
+.quiz-live { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #c23a5e; }
+.quiz-live i { width: 8px; height: 8px; border-radius: 50%; background: #e0466f; animation: quiz-pulse 1.6s infinite; }
+@keyframes quiz-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .quiz-live i { animation: none; } }
+.quiz-body { margin-top: 14px; }
+.quiz-wait { margin: 0; padding: 18px; text-align: center; color: var(--ink-soft); background: var(--pink-50); border-radius: var(--radius-sm); }
+.quiz-wait small { display: block; margin-top: 4px; font-size: 13px; }
+.quiz-q { margin: 0 0 14px; font-size: 18px; font-weight: 700; color: var(--navy); line-height: 1.6; }
+.quiz-badge { display: inline-block; margin-right: 8px; padding: 2px 10px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 13px; vertical-align: 2px; }
+.quiz-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.quiz-opt {
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 10px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; font: inherit; color: var(--ink); text-align: left;
+}
+button.quiz-opt { cursor: pointer; transition: border-color .2s, background .2s; }
+button.quiz-opt:hover:not(:disabled) { border-color: var(--purple-400); background: var(--purple-100); }
+.qo-no { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--pink-100); font-size: 13px; font-weight: 700; position: relative; }
+.qo-text { flex: 1; position: relative; }
+.qo-count { flex: none; position: relative; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+.qo-bar { position: absolute; inset: 0 auto 0 0; background: rgba(132, 139, 180, .16); transition: width .4s; }
+.quiz-opt.picked { border-color: var(--navy); background: var(--purple-100); }
+.quiz-opt.correct { border-color: #2f9e64; }
+.quiz-opt.correct .qo-bar { background: rgba(47, 158, 100, .18); }
+.quiz-opt.correct .qo-no { background: #2f9e64; color: #fff; }
+.quiz-opt.wrong { border-color: #d0567a; }
+.quiz-opt.wrong .qo-no { background: #d0567a; color: #fff; }
+.quiz-msg { margin: 14px 0 0; color: var(--ink-soft); }
+.quiz-msg small { margin-left: 6px; }
+.quiz-msg.good { color: #2f7d52; font-weight: 700; font-size: 17px; }
+.quiz-msg.bad { color: #b03a5e; font-weight: 700; }
+.quiz-exp { margin: 10px 0 0; padding: 12px 14px; background: #fef8e4; border-radius: var(--radius-sm); font-size: 15px; line-height: 1.7; }
+@media (max-width: 640px) { .quiz-opts { grid-template-columns: 1fr; } }
+
+/* 실시간 퀴즈 (관리자) */
+.quiz-admin-item.is-open { border-color: var(--navy); box-shadow: 0 0 0 2px var(--purple-100); }
+.qa-bars { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.qa-bars li { display: grid; grid-template-columns: minmax(0, 1fr) 120px 44px; align-items: center; gap: 10px; font-size: 14px; }
+.qa-bars li.is-answer .qa-label { font-weight: 700; color: #2f7d52; }
+.qa-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qa-track { height: 10px; border-radius: 999px; background: var(--pink-100); overflow: hidden; }
+.qa-track span { display: block; height: 100%; background: var(--purple-400); }
+.qa-bars li.is-answer .qa-track span { background: #2f9e64; }
+.qa-num { text-align: right; color: var(--ink-soft); }
+
 /* FAQ */
 .faq-list { max-width: 820px; margin-inline: 0; display: grid; gap: 14px; }
 .faq-item { padding: 0; overflow: hidden; }
@@ -645,7 +769,7 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .success-summary dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
 .apply-success .btn { margin-top: 14px; }
 
-/* 수강생 공간 */
+/* 학습자 공간 */
 .login-card { max-width: 440px; margin-inline: auto; display: grid; gap: 16px; padding: 36px; }
 .login-card h3 { text-align: center; font-size: 20px; }
 .login-icon { text-align: center; font-size: 36px; }
@@ -913,6 +1037,10 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .notice-form-row .btn-ghost + .btn-primary { margin-left: 0; }
 .notice-form.is-editing { outline: 2px solid var(--accent); outline-offset: -2px; }
 .ap-notice-list li.is-editing { border-color: var(--accent); }
+.task-form.is-editing { outline: 2px solid var(--accent); outline-offset: -2px; }
+.task-form-row { display: grid; grid-template-columns: 220px 1fr; gap: 14px; }
+.task-list time { margin: 0 6px; }
+@media (max-width: 640px) { .task-form-row { grid-template-columns: 1fr; } }
 .ap-notice-list .notice-tag.is-pin { background: var(--pink-500); color: #fff; }
 .ap-notice-list .notice-tag.is-popup { background: var(--purple-100); color: var(--accent); }
 .ap-row-actions { flex-wrap: wrap; justify-content: flex-end; }
@@ -1033,7 +1161,7 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 @media (max-width: 960px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .enroll-layout { grid-template-columns: 1fr; }
+  .enroll-layout, .materials-grid { grid-template-columns: 1fr; }
   .key-info-grid { grid-template-columns: repeat(2, 1fr); }
   .key-item:nth-child(3) { border-left: 0; }
   .key-item:nth-child(n+3) { border-top: 1px dashed var(--border); }
@@ -1143,6 +1271,7 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
       </a>
       <nav class="site-nav" id="site-nav" aria-label="주요 메뉴"></nav>
       <div class="header-tools">
+        <div class="header-user" id="header-user"></div>
         <button class="admin-lock" type="button" id="admin-lock" aria-label="관리자 화면 열기" title="관리자">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm3 7a1.5 1.5 0 0 1 .75 2.8V18a.75.75 0 0 1-1.5 0v-1.2A1.5 1.5 0 0 1 12 14Z"/></svg>
         </button>
@@ -1198,15 +1327,16 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
     <div class="container key-info" id="key-info"></div>
     <section class="container notice-board" id="notice" hidden></section>
 
-    <section class="section" id="about"></section>
-    <section class="section section-tint" id="curriculum"></section>
-    <section class="section" id="enroll"></section>
-    <section class="section section-tint" id="tools"></section>
-    <section class="section" id="schedule"></section>
-    <section class="section section-tint" id="apply"></section>
-    <section class="section" id="poll"></section>
-    <section class="section section-tint" id="student"></section>
-    <section class="section" id="faq"></section>
+    <section class="section bg-blue" id="about"></section>
+    <section class="section bg-white" id="curriculum"></section>
+    <section class="section bg-pink" id="materials"></section>
+    <section class="section bg-yellow" id="enroll"></section>
+    <section class="section bg-green" id="tools"></section>
+    <section class="section bg-blue" id="schedule"></section>
+    <section class="section bg-white" id="apply"></section>
+    <section class="section bg-pink" id="poll"></section>
+    <section class="section bg-yellow" id="student"></section>
+    <section class="section bg-green" id="faq"></section>
   </main>
 
   <footer class="site-footer" id="instructor"></footer>
@@ -1215,11 +1345,12 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 
   <dialog class="popup" id="welcome-popup" aria-labelledby="popup-title"></dialog>
   <dialog class="popup notice-popup" id="notice-popup" aria-labelledby="notice-popup-title"></dialog>
+  <dialog class="admin-login student-login" id="student-login" aria-labelledby="student-login-title"></dialog>
   <dialog class="admin-login" id="admin-login" aria-labelledby="admin-login-title"></dialog>
   <dialog class="admin-panel" id="admin-panel" aria-labelledby="admin-title"></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script type="application/json" id="bundle-shell">"\u003c!doctype html\u003e\n\u003chtml lang=\"ko\"\u003e\n\u003chead\u003e\n  \u003cmeta charset=\"utf-8\"\u003e\n  \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\u003e\n  \u003ctitle\u003e예비교수자 과정\u003c/title\u003e\n  \u003clink rel=\"preconnect\" href=\"https://fonts.googleapis.com\"\u003e\n  \u003clink rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin\u003e\n  \u003clink href=\"https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800\u0026display=swap\" rel=\"stylesheet\"\u003e\n  \u003cstyle\u003e%%CSS%%\u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n  \u003ca class=\"skip-link\" href=\"#main\"\u003e본문 바로가기\u003c/a\u003e\n\n  \u003cheader class=\"site-header\" id=\"top\"\u003e\n    \u003cdiv class=\"header-inner\"\u003e\n      \u003ca class=\"brand\" href=\"#top\" aria-label=\"맨 위로\"\u003e\n        \u003cspan class=\"brand-mark\" aria-hidden=\"true\"\u003eFF\u003c/span\u003e\n        \u003cspan class=\"brand-text\"\u003e\n          \u003cstrong data-bind=\"site.shortTitle\"\u003e\u003c/strong\u003e\n          \u003csmall data-bind=\"site.organization\"\u003e\u003c/small\u003e\n        \u003c/span\u003e\n      \u003c/a\u003e\n      \u003cnav class=\"site-nav\" id=\"site-nav\" aria-label=\"주요 메뉴\"\u003e\u003c/nav\u003e\n      \u003cdiv class=\"header-tools\"\u003e\n        \u003cbutton class=\"admin-lock\" type=\"button\" id=\"admin-lock\" aria-label=\"관리자 화면 열기\" title=\"관리자\"\u003e\n          \u003csvg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"\u003e\u003cpath fill=\"currentColor\" d=\"M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm3 7a1.5 1.5 0 0 1 .75 2.8V18a.75.75 0 0 1-1.5 0v-1.2A1.5 1.5 0 0 1 12 14Z\"/\u003e\u003c/svg\u003e\n        \u003c/button\u003e\n        \u003cbutton class=\"menu-toggle\" type=\"button\" aria-expanded=\"false\" aria-controls=\"site-nav\" aria-label=\"메뉴 열기\"\u003e\n          \u003cspan\u003e\u003c/span\u003e\u003cspan\u003e\u003c/span\u003e\u003cspan\u003e\u003c/span\u003e\n        \u003c/button\u003e\n      \u003c/div\u003e\n    \u003c/div\u003e\n  \u003c/header\u003e\n\n  \u003cmain id=\"main\"\u003e\n    \u003csection class=\"hero\"\u003e\n      \u003cdiv class=\"container hero-inner\"\u003e\n        \u003c!-- 제목 그림: 강단에서 AI 화면을 가리키며 강의하는 예비교수자 --\u003e\n        \u003cdiv class=\"hero-art\" aria-hidden=\"true\"\u003e\n          \u003csvg viewBox=\"0 0 360 300\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\n            \u003cg stroke-width=\"2\" opacity=\".55\"\u003e\n              \u003cpath d=\"M22 14v14M15 21h14\"/\u003e\n              \u003cpath d=\"M226 12v12M220 18h12\"/\u003e\n              \u003cpath d=\"M344 112v12M338 118h12\"/\u003e\n            \u003c/g\u003e\n            \u003crect x=\"20\" y=\"40\" width=\"220\" height=\"140\" rx=\"6\" fill=\"currentColor\" fill-opacity=\".12\"/\u003e\n            \u003cg stroke-width=\"2\" opacity=\".7\"\u003e\n              \u003cpath d=\"M70 85 130 70M70 85 130 110M70 85 130 150M70 135 130 70M70 135 130 110M70 135 130 150\"/\u003e\n              \u003cpath d=\"M130 70 190 95M130 110 190 95M130 150 190 95M130 70 190 135M130 110 190 135M130 150 190 135\"/\u003e\n            \u003c/g\u003e\n            \u003cg fill=\"currentColor\"\u003e\n              \u003ccircle cx=\"70\" cy=\"85\" r=\"7\"/\u003e\u003ccircle cx=\"70\" cy=\"135\" r=\"7\"/\u003e\n              \u003ccircle cx=\"130\" cy=\"70\" r=\"7\"/\u003e\u003ccircle cx=\"130\" cy=\"110\" r=\"7\"/\u003e\u003ccircle cx=\"130\" cy=\"150\" r=\"7\"/\u003e\n              \u003ccircle cx=\"190\" cy=\"95\" r=\"7\"/\u003e\u003ccircle cx=\"190\" cy=\"135\" r=\"7\"/\u003e\n            \u003c/g\u003e\n            \u003cpath d=\"M130 180v35M105 238l25-23 25 23\"/\u003e\n            \u003ccircle cx=\"275\" cy=\"150\" r=\"18\" fill=\"currentColor\" fill-opacity=\".25\"/\u003e\n            \u003cpath d=\"M245 232q0-52 30-54 30 2 30 54\" fill=\"currentColor\" fill-opacity=\".18\"/\u003e\n            \u003cpath d=\"M255 192 230 162\"/\u003e\n            \u003cpath d=\"M230 162 206 136\" stroke-width=\"2\"/\u003e\n            \u003cpath d=\"M240 217h70l-8 75h-54z\" fill=\"currentColor\" fill-opacity=\".22\"/\u003e\n            \u003crect x=\"232\" y=\"207\" width=\"86\" height=\"10\" rx=\"2\" fill=\"currentColor\"/\u003e\n            \u003cpath d=\"M300 40l40 15-40 15-40-15z\" fill=\"currentColor\"/\u003e\n            \u003cpath d=\"M276 63v15q24 10 48 0V63\"/\u003e\n            \u003cpath d=\"M340 55v24\" stroke-width=\"2\"/\u003e\u003ccircle cx=\"340\" cy=\"82\" r=\"3\" fill=\"currentColor\"/\u003e\n            \u003cpath d=\"M0 292h360\" stroke-width=\"2\" opacity=\".4\"/\u003e\n          \u003c/svg\u003e\n        \u003c/div\u003e\n        \u003cp class=\"eyebrow\" data-bind=\"site.badge\"\u003e\u003c/p\u003e\n        \u003ch1 data-bind=\"site.title\"\u003e\u003c/h1\u003e\n        \u003cp class=\"hero-subtitle\" data-bind=\"site.subtitle\"\u003e\u003c/p\u003e\n        \u003cp class=\"hero-desc\" data-bind=\"site.description\"\u003e\u003c/p\u003e\n        \u003cdiv class=\"hero-actions\" id=\"hero-actions\"\u003e\u003c/div\u003e\n      \u003c/div\u003e\n    \u003c/section\u003e\n\n    \u003cdiv class=\"container key-info\" id=\"key-info\"\u003e\u003c/div\u003e\n    \u003csection class=\"container notice-board\" id=\"notice\" hidden\u003e\u003c/section\u003e\n\n    \u003csection class=\"section\" id=\"about\"\u003e\u003c/section\u003e\n    \u003csection class=\"section section-tint\" id=\"curriculum\"\u003e\u003c/section\u003e\n    \u003csection class=\"section\" id=\"enroll\"\u003e\u003c/section\u003e\n    \u003csection class=\"section section-tint\" id=\"tools\"\u003e\u003c/section\u003e\n    \u003csection class=\"section\" id=\"schedule\"\u003e\u003c/section\u003e\n    \u003csection class=\"section section-tint\" id=\"apply\"\u003e\u003c/section\u003e\n    \u003csection class=\"section\" id=\"poll\"\u003e\u003c/section\u003e\n    \u003csection class=\"section section-tint\" id=\"student\"\u003e\u003c/section\u003e\n    \u003csection class=\"section\" id=\"faq\"\u003e\u003c/section\u003e\n  \u003c/main\u003e\n\n  \u003cfooter class=\"site-footer\" id=\"instructor\"\u003e\u003c/footer\u003e\n\n  \u003cbutton class=\"to-top\" type=\"button\" aria-label=\"맨 위로 이동\"\u003e↑\u003c/button\u003e\n\n  \u003cdialog class=\"popup\" id=\"welcome-popup\" aria-labelledby=\"popup-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"popup notice-popup\" id=\"notice-popup\" aria-labelledby=\"notice-popup-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"admin-login\" id=\"admin-login\" aria-labelledby=\"admin-login-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"admin-panel\" id=\"admin-panel\" aria-labelledby=\"admin-title\"\u003e\u003c/dialog\u003e\n  \u003cdiv class=\"toast\" id=\"toast\" role=\"status\" aria-live=\"polite\"\u003e\u003c/div\u003e\n\n  \u003cscript type=\"application/json\" id=\"bundle-shell\"\u003e%%SHELL%%\u003c/script\u003e\n  \u003cscript id=\"site-config\"\u003e%%CONFIG%%\u003c/script\u003e\n  \u003cscript data-file=\"app.js\"\u003e%%JS:app.js%%\u003c/script\u003e\n  \u003cscript data-file=\"participate.js\"\u003e%%JS:participate.js%%\u003c/script\u003e\n  \u003cscript data-file=\"admin.js\"\u003e%%JS:admin.js%%\u003c/script\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n"</script>
+  <script type="application/json" id="bundle-shell">"\u003c!doctype html\u003e\n\u003chtml lang=\"ko\"\u003e\n\u003chead\u003e\n  \u003cmeta charset=\"utf-8\"\u003e\n  \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\u003e\n  \u003ctitle\u003e예비교수자 과정\u003c/title\u003e\n  \u003clink rel=\"preconnect\" href=\"https://fonts.googleapis.com\"\u003e\n  \u003clink rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin\u003e\n  \u003clink href=\"https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800\u0026display=swap\" rel=\"stylesheet\"\u003e\n  \u003cstyle\u003e%%CSS%%\u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n  \u003ca class=\"skip-link\" href=\"#main\"\u003e본문 바로가기\u003c/a\u003e\n\n  \u003cheader class=\"site-header\" id=\"top\"\u003e\n    \u003cdiv class=\"header-inner\"\u003e\n      \u003ca class=\"brand\" href=\"#top\" aria-label=\"맨 위로\"\u003e\n        \u003cspan class=\"brand-mark\" aria-hidden=\"true\"\u003eFF\u003c/span\u003e\n        \u003cspan class=\"brand-text\"\u003e\n          \u003cstrong data-bind=\"site.shortTitle\"\u003e\u003c/strong\u003e\n          \u003csmall data-bind=\"site.organization\"\u003e\u003c/small\u003e\n        \u003c/span\u003e\n      \u003c/a\u003e\n      \u003cnav class=\"site-nav\" id=\"site-nav\" aria-label=\"주요 메뉴\"\u003e\u003c/nav\u003e\n      \u003cdiv class=\"header-tools\"\u003e\n        \u003cdiv class=\"header-user\" id=\"header-user\"\u003e\u003c/div\u003e\n        \u003cbutton class=\"admin-lock\" type=\"button\" id=\"admin-lock\" aria-label=\"관리자 화면 열기\" title=\"관리자\"\u003e\n          \u003csvg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" aria-hidden=\"true\"\u003e\u003cpath fill=\"currentColor\" d=\"M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm3 7a1.5 1.5 0 0 1 .75 2.8V18a.75.75 0 0 1-1.5 0v-1.2A1.5 1.5 0 0 1 12 14Z\"/\u003e\u003c/svg\u003e\n        \u003c/button\u003e\n        \u003cbutton class=\"menu-toggle\" type=\"button\" aria-expanded=\"false\" aria-controls=\"site-nav\" aria-label=\"메뉴 열기\"\u003e\n          \u003cspan\u003e\u003c/span\u003e\u003cspan\u003e\u003c/span\u003e\u003cspan\u003e\u003c/span\u003e\n        \u003c/button\u003e\n      \u003c/div\u003e\n    \u003c/div\u003e\n  \u003c/header\u003e\n\n  \u003cmain id=\"main\"\u003e\n    \u003csection class=\"hero\"\u003e\n      \u003cdiv class=\"container hero-inner\"\u003e\n        \u003c!-- 제목 그림: 강단에서 AI 화면을 가리키며 강의하는 예비교수자 --\u003e\n        \u003cdiv class=\"hero-art\" aria-hidden=\"true\"\u003e\n          \u003csvg viewBox=\"0 0 360 300\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\n            \u003cg stroke-width=\"2\" opacity=\".55\"\u003e\n              \u003cpath d=\"M22 14v14M15 21h14\"/\u003e\n              \u003cpath d=\"M226 12v12M220 18h12\"/\u003e\n              \u003cpath d=\"M344 112v12M338 118h12\"/\u003e\n            \u003c/g\u003e\n            \u003crect x=\"20\" y=\"40\" width=\"220\" height=\"140\" rx=\"6\" fill=\"currentColor\" fill-opacity=\".12\"/\u003e\n            \u003cg stroke-width=\"2\" opacity=\".7\"\u003e\n              \u003cpath d=\"M70 85 130 70M70 85 130 110M70 85 130 150M70 135 130 70M70 135 130 110M70 135 130 150\"/\u003e\n              \u003cpath d=\"M130 70 190 95M130 110 190 95M130 150 190 95M130 70 190 135M130 110 190 135M130 150 190 135\"/\u003e\n            \u003c/g\u003e\n            \u003cg fill=\"currentColor\"\u003e\n              \u003ccircle cx=\"70\" cy=\"85\" r=\"7\"/\u003e\u003ccircle cx=\"70\" cy=\"135\" r=\"7\"/\u003e\n              \u003ccircle cx=\"130\" cy=\"70\" r=\"7\"/\u003e\u003ccircle cx=\"130\" cy=\"110\" r=\"7\"/\u003e\u003ccircle cx=\"130\" cy=\"150\" r=\"7\"/\u003e\n              \u003ccircle cx=\"190\" cy=\"95\" r=\"7\"/\u003e\u003ccircle cx=\"190\" cy=\"135\" r=\"7\"/\u003e\n            \u003c/g\u003e\n            \u003cpath d=\"M130 180v35M105 238l25-23 25 23\"/\u003e\n            \u003ccircle cx=\"275\" cy=\"150\" r=\"18\" fill=\"currentColor\" fill-opacity=\".25\"/\u003e\n            \u003cpath d=\"M245 232q0-52 30-54 30 2 30 54\" fill=\"currentColor\" fill-opacity=\".18\"/\u003e\n            \u003cpath d=\"M255 192 230 162\"/\u003e\n            \u003cpath d=\"M230 162 206 136\" stroke-width=\"2\"/\u003e\n            \u003cpath d=\"M240 217h70l-8 75h-54z\" fill=\"currentColor\" fill-opacity=\".22\"/\u003e\n            \u003crect x=\"232\" y=\"207\" width=\"86\" height=\"10\" rx=\"2\" fill=\"currentColor\"/\u003e\n            \u003cpath d=\"M300 40l40 15-40 15-40-15z\" fill=\"currentColor\"/\u003e\n            \u003cpath d=\"M276 63v15q24 10 48 0V63\"/\u003e\n            \u003cpath d=\"M340 55v24\" stroke-width=\"2\"/\u003e\u003ccircle cx=\"340\" cy=\"82\" r=\"3\" fill=\"currentColor\"/\u003e\n            \u003cpath d=\"M0 292h360\" stroke-width=\"2\" opacity=\".4\"/\u003e\n          \u003c/svg\u003e\n        \u003c/div\u003e\n        \u003cp class=\"eyebrow\" data-bind=\"site.badge\"\u003e\u003c/p\u003e\n        \u003ch1 data-bind=\"site.title\"\u003e\u003c/h1\u003e\n        \u003cp class=\"hero-subtitle\" data-bind=\"site.subtitle\"\u003e\u003c/p\u003e\n        \u003cp class=\"hero-desc\" data-bind=\"site.description\"\u003e\u003c/p\u003e\n        \u003cdiv class=\"hero-actions\" id=\"hero-actions\"\u003e\u003c/div\u003e\n      \u003c/div\u003e\n    \u003c/section\u003e\n\n    \u003cdiv class=\"container key-info\" id=\"key-info\"\u003e\u003c/div\u003e\n    \u003csection class=\"container notice-board\" id=\"notice\" hidden\u003e\u003c/section\u003e\n\n    \u003csection class=\"section bg-blue\" id=\"about\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-white\" id=\"curriculum\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-pink\" id=\"materials\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-yellow\" id=\"enroll\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-green\" id=\"tools\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-blue\" id=\"schedule\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-white\" id=\"apply\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-pink\" id=\"poll\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-yellow\" id=\"student\"\u003e\u003c/section\u003e\n    \u003csection class=\"section bg-green\" id=\"faq\"\u003e\u003c/section\u003e\n  \u003c/main\u003e\n\n  \u003cfooter class=\"site-footer\" id=\"instructor\"\u003e\u003c/footer\u003e\n\n  \u003cbutton class=\"to-top\" type=\"button\" aria-label=\"맨 위로 이동\"\u003e↑\u003c/button\u003e\n\n  \u003cdialog class=\"popup\" id=\"welcome-popup\" aria-labelledby=\"popup-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"popup notice-popup\" id=\"notice-popup\" aria-labelledby=\"notice-popup-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"admin-login student-login\" id=\"student-login\" aria-labelledby=\"student-login-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"admin-login\" id=\"admin-login\" aria-labelledby=\"admin-login-title\"\u003e\u003c/dialog\u003e\n  \u003cdialog class=\"admin-panel\" id=\"admin-panel\" aria-labelledby=\"admin-title\"\u003e\u003c/dialog\u003e\n  \u003cdiv class=\"toast\" id=\"toast\" role=\"status\" aria-live=\"polite\"\u003e\u003c/div\u003e\n\n  \u003cscript type=\"application/json\" id=\"bundle-shell\"\u003e%%SHELL%%\u003c/script\u003e\n  \u003cscript id=\"site-config\"\u003e%%CONFIG%%\u003c/script\u003e\n  \u003cscript data-file=\"app.js\"\u003e%%JS:app.js%%\u003c/script\u003e\n  \u003cscript data-file=\"participate.js\"\u003e%%JS:participate.js%%\u003c/script\u003e\n  \u003cscript data-file=\"admin.js\"\u003e%%JS:admin.js%%\u003c/script\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n"</script>
   <script id="site-config">/*
  * ─────────────────────────────────────────────────────────────
  *  사이트 설정 파일
@@ -1257,7 +1388,7 @@ window.SITE_CONFIG = {
   // ── 첫 화면 (강의 소개) ─────────────────────────────────────
   site: {
     title: "2026-2 예비교수자 과정",
-    shortTitle: "예비교수자 과정", // 헤더 로고 옆에 보이는 짧은 이름
+    shortTitle: "CTL810 예비교수자 과정", // 헤더 로고 옆에 보이는 짧은 이름
     subtitle: "교수·학습 이론부터 수업시연까지",
     organization: "고려대학교",
     badge: "CTL-810 · 2026학년도 2학기 · 3학점",
@@ -1281,9 +1412,8 @@ window.SITE_CONFIG = {
     { id: "curriculum", label: "강의 계획" },
     { id: "schedule", label: "수업 일정" },
     { id: "enroll", label: "평가 안내" },
-    { id: "student", label: "수강생 공간" },
+    { id: "student", label: "학습자 공간" },
     { id: "faq", label: "FAQ" },
-    { id: "instructor", label: "교수자" },
   ],
 
   // ── 과목 소개: 숫자 통계 + 학습활동 슬라이드 ──────────────────
@@ -1306,7 +1436,7 @@ window.SITE_CONFIG = {
       "강의계획안을 바탕으로 실제 수업을 시연하고, 동료 피드백을 바탕으로 재설계할 수 있습니다.",
       "매주 성찰 노트 작성과 전문학습공동체 활동을 통해 교수자에게 필요한 역량을 강화할 수 있습니다.",
     ],
-    benefitsHeading: "이 수업의 학습활동",
+    benefitsHeading: "학습활동",
     benefits: [
       { icon: "🎒", title: "Teachers as Learners", text: "모든 활동을 학습자의 입장에서 직접 경험하고 성찰하며, 교육에 대한 이해를 넓히고 나의 강의를 구체화합니다." },
       { icon: "📝", title: "Reflective Practice", text: "매주 성찰노트를 쓰며 자기성찰의 자세와 방법을 익힙니다. 전문가로서 계속 성장하는 힘의 바탕입니다." },
@@ -1506,26 +1636,31 @@ window.SITE_CONFIG = {
     ],
   },
 
-  // ── 평가 안내 (교재·준비물 + 과제 및 평가) ─────────────────────
-  enroll: {
-    heading: "교재 및 평가 안내",
-    lead: "수업 자료와 공지는 KU LMS로 안내되며, 다섯 가지 항목으로 평가합니다.",
-    prepHeading: "교재 및 참고자료",
-    prep: [
+  // ── 교재 및 참고자료 ─────────────────────────────────────────
+  materials: {
+    heading: "교재 및 참고자료",
+    lead: "수업 자료와 공지는 KU LMS로 안내됩니다.",
+    items: [
       { icon: "📚", title: "교재", text: "강의 자료 외에 별도의 교재는 없습니다." },
       { icon: "🖥️", title: "KU LMS", text: "강의 자료와 각종 공지사항은 KU LMS를 통해 안내됩니다." },
       { icon: "📄", title: "주차별 학습 자료", text: "주제에 따라 관련 논문·영상 등 학습 자료를 해당 주차에 안내합니다." },
       { icon: "🎯", title: "나의 전공 과목", text: "강의계획서와 수업시연에 쓸, 앞으로 가르칠 전공 과목을 하나 정해 두세요." },
     ],
-    stepsHeading: "과제 및 평가",
-    steps: [
-      { title: "출석 및 참여도 20%", text: "출석과 수업 참여 정도" },
-      { title: "성찰노트 20%", text: "매주 학습 내용에 대한 개인 성찰노트 작성" },
-      { title: "강의계획서 20%", text: "강의계획서 발표 및 수정본 제출" },
-      { title: "수업시연 30%", text: "1차시 수업 시연 (도입 / 전개 / 정리)" },
-      { title: "기말과제 10%", text: "한 학기 동안의 학습 내용에 대한 리포트 작성" },
+  },
+
+  // ── 과제 및 평가 ─────────────────────────────────────────────
+  // 교수자는 관리자 화면 → 사이트 편집 → '과제 및 평가' 에서 항목·비율·설명을 바꿀 수 있습니다.
+  // percent 는 숫자만 적으세요. 합계가 화면에 함께 표시됩니다.
+  enroll: {
+    heading: "과제 및 평가",
+    lead: "다섯 가지 항목으로 평가합니다.",
+    items: [
+      { title: "출석 및 참여도", percent: 20, text: "출석과 수업 참여 정도" },
+      { title: "성찰노트", percent: 20, text: "매주 학습 내용에 대한 개인 성찰노트 작성" },
+      { title: "강의계획서", percent: 20, text: "강의계획서 발표 및 수정본 제출" },
+      { title: "수업시연", percent: 30, text: "1차시 수업 시연 (도입 / 전개 / 정리)" },
+      { title: "기말과제", percent: 10, text: "한 학기 동안의 학습 내용에 대한 리포트 작성" },
     ],
-    applyButton: { label: "수강생 정보 작성하기", href: "#apply", note: "발표 순서와 PLC 구성을 위해 아래 정보를 작성해 주세요." },
   },
 
   /*
@@ -1541,8 +1676,8 @@ window.SITE_CONFIG = {
    * ─────────────────────────────────────────────────────────────
    */
   participation: {
-    mode: "local",            // Google 시트 연결 후 "sheets" 로 바꾸세요
-    sheetsUrl: "",            // Apps Script 웹 앱 주소
+    mode: "sheets",           // "local" 로 바꾸면 체험 모드(이 브라우저에만 저장)로 돌아갑니다
+    sheetsUrl: "https://script.google.com/macros/s/AKfycbwiRzTQsZwN5B82X6WlrtBCZ2Hi8syLvqgd2OPrtA-A6vSbC6zmy6Phc61PTbEp_QCv/exec", // Apps Script 웹 앱 주소
     pollRefreshSeconds: 15,   // 시트 연결 시 투표 결과를 새로 가져오는 간격(초)
   },
 
@@ -1585,10 +1720,10 @@ window.SITE_CONFIG = {
     ],
   },
 
-  // ── 수강생 공간: 로그인 · 출석 · 과제 제출 ─────────────────────
+  // ── 학습자 공간: 로그인 · 실시간 퀴즈 · 출석 · 과제 제출 ─────────────
   student: {
-    heading: "수강생 공간",
-    lead: "학번과 이름으로 로그인하고 출석 체크와 과제 제출을 하세요.",
+    heading: "학습자 공간",
+    lead: "학번과 이름으로 로그인하고 실시간 퀴즈, 출석 체크, 과제 제출을 하세요.",
     attendance: {
       openBeforeMinutes: 30,  // 수업 시작 몇 분 전부터 출석 가능
       lateAfterMinutes: 10,   // 시작 후 몇 분이 지나면 '지각'
@@ -1600,6 +1735,38 @@ window.SITE_CONFIG = {
       maxSizeMB: 20,          // 시트 연결 시 Google 쪽 한도 때문에 30MB 이하를 권장합니다
       allowLate: true,        // 마감 후에도 '지각 제출'로 받을지
     },
+  },
+
+  // ── 실시간 퀴즈 (학습자 공간) ─────────────────────────────────
+  // 문항은 여기 또는 관리자 화면 → 사이트 편집 → '실시간 퀴즈' 에서 만들고,
+  // 수업 중에는 관리자 화면 → '🧠 퀴즈' 탭에서 [진행하기] → [정답 공개] → [종료] 순서로 운영합니다.
+  // answer 는 정답 보기의 번호(1부터)입니다. id 는 응답 기록을 구분하므로 문항마다 달라야 합니다.
+  quiz: {
+    heading: "실시간 퀴즈",
+    refreshSeconds: 5,        // 학습자 화면이 진행 상황을 새로 확인하는 간격(초)
+    questions: [
+      {
+        id: "q1",
+        question: "ADDIE 모형의 다섯 단계를 순서대로 바르게 나열한 것은?",
+        options: ["분석 → 설계 → 개발 → 실행 → 평가", "설계 → 분석 → 개발 → 실행 → 평가", "분석 → 개발 → 설계 → 평가 → 실행", "설계 → 개발 → 분석 → 실행 → 평가"],
+        answer: 1,
+        explanation: "ADDIE는 Analysis(분석)·Design(설계)·Development(개발)·Implementation(실행)·Evaluation(평가)의 머리글자입니다.",
+      },
+      {
+        id: "q2",
+        question: "학습자가 실제적인 문제를 해결하는 과정에서 지식을 구성하도록 하는 교수법은?",
+        options: ["강의식 수업", "PBL (문제중심학습)", "반복 연습", "시범 보이기"],
+        answer: 2,
+        explanation: "PBL(Problem-Based Learning)은 실제적인 문제를 출발점으로 삼아 학습자가 스스로 탐구하며 배우는 교수법입니다.",
+      },
+      {
+        id: "q3",
+        question: "켈러(Keller)의 ARCS 동기설계 모형의 네 요소가 아닌 것은?",
+        options: ["주의 (Attention)", "관련성 (Relevance)", "자신감 (Confidence)", "반복 (Repetition)"],
+        answer: 4,
+        explanation: "ARCS는 주의(Attention)·관련성(Relevance)·자신감(Confidence)·만족감(Satisfaction)입니다.",
+      },
+    ],
   },
 
   // ── 첫 방문 안내 팝업 ────────────────────────────────────────
@@ -1700,6 +1867,13 @@ window.SITE_CONFIG = {
     el.textContent = get(el.dataset.bind) ?? "";
   });
 
+  // ── 헤더 로고: 교수자 소개의 그림을 그대로 씁니다 (없으면 'FF' 글자) ──
+  const brandMark = $(".brand-mark");
+  if (brandMark && C.instructor?.photo) {
+    brandMark.innerHTML = `<img src="${esc(C.instructor.photo)}" alt="">`;
+    brandMark.classList.add("has-img");
+  }
+
   // ── 메뉴 ──────────────────────────────────────────
   const nav = $("#site-nav");
   nav.innerHTML = C.nav.map((n) => `<a href="#${esc(n.id)}" data-id="${esc(n.id)}">${esc(n.label)}</a>`).join("");
@@ -1745,23 +1919,16 @@ window.SITE_CONFIG = {
           </ol>
         </div>` : ""}
 
-      <div class="slider" aria-roledescription="carousel" aria-label="${esc(A.benefitsHeading)}">
-        <div class="slider-head">
-          <h3>${esc(A.benefitsHeading)}</h3>
-          <div class="slider-controls">
-            <button class="slider-btn" type="button" data-dir="-1" aria-label="이전 장점">‹</button>
-            <button class="slider-btn" type="button" data-dir="1" aria-label="다음 장점">›</button>
-          </div>
-        </div>
-        <div class="slider-track" tabindex="0">
-          ${A.benefits.map((b, i) => `
-            <article class="card slide" aria-roledescription="slide" aria-label="${i + 1} / ${A.benefits.length}">
+      <div class="activities">
+        <h3>${esc(A.benefitsHeading)}</h3>
+        <div class="activity-grid">
+          ${A.benefits.map((b) => `
+            <article class="card activity-card">
               <div class="highlight-icon" aria-hidden="true">${esc(b.icon)}</div>
               <h4>${esc(b.title)}</h4>
               <p>${esc(b.text)}</p>
             </article>`).join("")}
         </div>
-        <div class="slider-dots" role="group" aria-label="슬라이드 선택"></div>
       </div>
     </div>`;
 
@@ -2124,33 +2291,45 @@ window.SITE_CONFIG = {
       </div>
     </div>`;
 
-  // ── 수강 안내: 준비물 + 신청 절차 ───────────────────────
+  // ── 교재 및 참고자료 ─────────────────────────────────
+  // (예전 설정 모양 enroll.prep 도 그대로 읽습니다)
+  const M = C.materials || { heading: C.enroll?.prepHeading || "교재 및 참고자료", items: C.enroll?.prep || [] };
+  $("#materials").innerHTML = `
+    <div class="container">
+      ${sectionHead(M.heading, M.lead)}
+      <ul class="materials-grid">
+        ${(M.items || []).map((p) => `
+          <li class="card">
+            <span class="prep-icon" aria-hidden="true">${esc(p.icon)}</span>
+            <div><strong>${esc(p.title)}</strong><p>${esc(p.text)}</p></div>
+          </li>`).join("")}
+      </ul>
+    </div>`;
+
+  // ── 과제 및 평가 ─────────────────────────────────────
+  // (예전 설정 모양 enroll.steps 의 "제목 20%" 도 나눠서 읽습니다)
   const E = C.enroll;
+  const evalItems = E.items || (E.steps || []).map((s) => {
+    const m = String(s.title).match(/^(.*?)\s*(\d+(?:\.\d+)?)\s*%$/);
+    return { title: m ? m[1] : s.title, percent: m ? Number(m[2]) : 0, text: s.text };
+  });
+  const evalTotal = evalItems.reduce((sum, it) => sum + (Number(it.percent) || 0), 0);
   $("#enroll").innerHTML = `
     <div class="container">
-      ${sectionHead(E.heading, E.lead)}
-      <div class="enroll-layout">
-        <div class="card">
-          <h3 class="card-title">${esc(E.prepHeading)}</h3>
-          <ul class="prep-list">
-            ${E.prep.map((p) => `
-              <li>
-                <span class="prep-icon" aria-hidden="true">${esc(p.icon)}</span>
-                <div><strong>${esc(p.title)}</strong><p>${esc(p.text)}</p></div>
-              </li>`).join("")}
-          </ul>
+      ${sectionHead(E.items ? E.heading : E.stepsHeading || E.heading, E.items ? E.lead : "")}
+      <div class="card eval-card">
+        <div class="eval-bar" aria-hidden="true">
+          ${evalItems.map((it, i) => `<span class="eval-seg eval-c${i % 6}" style="flex-grow:${Number(it.percent) || 0}">${Number(it.percent) >= 8 ? `${esc(it.percent)}%` : ""}</span>`).join("")}
         </div>
-        <div class="card">
-          <h3 class="card-title">${esc(E.stepsHeading)}</h3>
-          <ol class="steps">
-            ${E.steps.map((s) => `<li><strong>${esc(s.title)}</strong><p>${esc(s.text)}</p></li>`).join("")}
-          </ol>
-          ${E.applyButton ? `
-          <div class="apply">
-            <a class="btn btn-primary" href="${esc(E.applyButton.href)}">${esc(E.applyButton.label)}</a>
-            ${E.applyButton.note ? `<small>${esc(E.applyButton.note)}</small>` : ""}
-          </div>` : ""}
-        </div>
+        <ol class="eval-list">
+          ${evalItems.map((it, i) => `
+            <li>
+              <span class="eval-dot eval-c${i % 6}" aria-hidden="true"></span>
+              <div class="eval-text"><strong>${esc(it.title)}</strong><p>${esc(it.text)}</p></div>
+              <span class="eval-pct">${esc(it.percent)}%</span>
+            </li>`).join("")}
+        </ol>
+        <p class="eval-total${evalTotal === 100 ? "" : " warn"}">합계 <strong>${evalTotal}%</strong>${evalTotal === 100 ? "" : " (100%가 되도록 비율을 맞춰 주세요)"}</p>
       </div>
     </div>`;
 
@@ -2278,53 +2457,12 @@ window.SITE_CONFIG = {
   }, { threshold: 0.6 });
   counters.forEach((el) => { el.textContent = "0"; countObserver.observe(el); });
 
-  // ── 장점 슬라이드 ──────────────────────────────────
-  const track = $(".slider-track");
-  const slides = [...track.children];
-  const dotsWrap = $(".slider-dots");
-  dotsWrap.innerHTML = slides.map((_, i) => `<button type="button" aria-label="${i + 1}번 슬라이드"></button>`).join("");
-  const dots = [...dotsWrap.children];
-
-  const step = () => slides[1] ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth;
-  const current = () => Math.round(track.scrollLeft / step());
-  const goTo = (i) => {
-    const max = track.scrollWidth - track.clientWidth;
-    track.scrollTo({ left: Math.max(0, Math.min(i * step(), max)), behavior: reduceMotion ? "auto" : "smooth" });
-  };
-  const updateSlider = () => {
-    const max = track.scrollWidth - track.clientWidth;
-    const i = track.scrollLeft >= max - 4 ? slides.length - 1 : current();
-    // 한 화면에 여러 장이 보일 때는 보이는 범위의 점을 모두 켭니다.
-    const visible = Math.max(1, Math.round(track.clientWidth / step()));
-    const first = Math.min(i, slides.length - visible);
-    dots.forEach((d, k) => {
-      const on = k >= first && k < first + visible;
-      d.classList.toggle("active", on);
-      d.setAttribute("aria-current", on ? "true" : "false");
-    });
-    $('.slider-btn[data-dir="-1"]').disabled = track.scrollLeft <= 4;
-    $('.slider-btn[data-dir="1"]').disabled = track.scrollLeft >= max - 4;
-  };
-
-  document.querySelectorAll(".slider-btn").forEach((b) =>
-    b.addEventListener("click", () => goTo(current() + Number(b.dataset.dir)))
-  );
-  dots.forEach((d, i) => d.addEventListener("click", () => goTo(i)));
-  track.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight") { e.preventDefault(); goTo(current() + 1); }
-    if (e.key === "ArrowLeft") { e.preventDefault(); goTo(current() - 1); }
-  });
-  let raf;
-  track.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(updateSlider); }, { passive: true });
-  window.addEventListener("resize", updateSlider);
-  updateSlider();
-
   // participate.js 에서 함께 쓰는 값과 도우미
   window.SITE = { esc, $, sectionHead, reduceMotion, weeks, dateKey, parseDate, withTime, fmtDate, fmtDateTime, countdownHTML };
 })();
 </script>
   <script data-file="participate.js">/*
- * 수강생 참여 기능: 투표 · 수강 신청서 · 로그인/출석/과제 제출 · 안내 팝업 · 첫 방문 폭죽
+ * 수강생 참여 기능: 투표 · 수강 신청서 · 로그인/실시간 퀴즈/출석/과제 제출 · 안내 팝업 · 첫 방문 폭죽
  * 내용 수정은 config.js 에서 하세요. 이 파일은 고칠 필요가 없습니다.
  */
 (function () {
@@ -2393,6 +2531,18 @@ window.SITE_CONFIG = {
     if (name != null && me.name !== String(name).trim()) throw new Error("학번과 이름이 명단과 일치하지 않습니다.");
   };
 
+  // ── 실시간 퀴즈 (체험 모드) ──
+  // 진행 상태: quiz:state = { openId, reveal }, 응답: quiz:answers = { 문항id: { 학번: { choice, name, at, correct } } }
+  const localQuizState = (id) => {
+    const st = store.get("quiz:state", { openId: "", reveal: false });
+    const all = store.get("quiz:answers", {});
+    const answers = (st.openId && all[st.openId]) || {};
+    const counts = {};
+    Object.values(answers).forEach((a) => { counts[a.choice] = (counts[a.choice] || 0) + 1; });
+    const mine = id && answers[id] ? answers[id].choice : null;
+    return { openId: st.openId || "", reveal: Boolean(st.reveal), counts, total: Object.keys(answers).length, mine };
+  };
+
   const columnLabel = (f) => f.sheetLabel || (f.type === "agree" ? "개인정보 동의" : f.label.replace(/\s*\(.*\)\s*$/, ""));
 
   // 투표·신청서·출석·과제의 읽기/쓰기는 모두 db 를 거칩니다.
@@ -2446,6 +2596,38 @@ window.SITE_CONFIG = {
         roster: store.get("roster", []),
       };
     },
+    async quizState(id) { return localQuizState(id); },
+    async quizAnswer({ id, name, qid, choice, correct }) {
+      checkLocalRoster(id, name);
+      const st = store.get("quiz:state", {});
+      if (st.openId !== qid) throw new Error("지금은 이 문항에 답할 수 없습니다.");
+      const all = store.get("quiz:answers", {});
+      all[qid] = all[qid] || {};
+      if (all[qid][id]) throw new Error("이미 답한 문항입니다.");
+      all[qid][id] = { choice, name, at: Date.now(), correct: Boolean(correct) };
+      store.set("quiz:answers", all);
+      return localQuizState(id);
+    },
+    async quizControl(_pw, { openId, reveal }) {
+      store.set("quiz:state", { openId: openId || "", reveal: Boolean(reveal) });
+      return localQuizState();
+    },
+    async quizResults() {
+      const all = store.get("quiz:answers", {});
+      const results = {};
+      Object.entries(all).forEach(([qid, answers]) => {
+        const counts = {};
+        Object.values(answers).forEach((a) => { counts[a.choice] = (counts[a.choice] || 0) + 1; });
+        results[qid] = { counts, total: Object.keys(answers).length };
+      });
+      return { state: localQuizState(), results };
+    },
+    async quizReset(_pw, qid) {
+      const all = store.get("quiz:answers", {});
+      delete all[qid];
+      store.set("quiz:answers", all);
+      return {};
+    },
     async saveRoster(_pw, roster) { store.set("roster", roster); return { count: roster.length }; },
     async saveNotice() { return {}; },
     async deleteNotice() { return {}; },
@@ -2467,6 +2649,11 @@ window.SITE_CONFIG = {
     async saveNotice(password, notice) { return remote("saveNotice", { password, notice }); },
     async deleteNotice(password, id) { return remote("deleteNotice", { password, id }); },
     async changeAdminPassword(password, newPassword) { return remote("changeAdminPassword", { password, newPassword }); },
+    async quizState(id) { return remote("quizState", id ? { id } : {}, "GET"); },
+    async quizAnswer({ id, name, qid, choice, correct }) { return remote("quizAnswer", { id, name, qid, choice, correct: Boolean(correct) }); },
+    async quizControl(password, { openId, reveal }) { return remote("quizControl", { password, openId: openId || "", reveal: Boolean(reveal) }); },
+    async quizResults(password) { return remote("quizResults", { password }); },
+    async quizReset(password, qid) { return remote("quizReset", { password, qid }); },
     async checkin({ id, name, week, code, openBeforeMinutes, lateAfterMinutes, alwaysOpen }) {
       return remote("checkin", {
         id, name, week: week.no, code, openBeforeMinutes, lateAfterMinutes, alwaysOpen: Boolean(alwaysOpen),
@@ -2854,7 +3041,7 @@ window.SITE_CONFIG = {
   }
 
   // ════════════════════════════════════════════════════
-  //  3. 수강생 공간: 로그인 · 출석 · 과제 제출
+  //  3. 학습자 공간: 로그인 · 실시간 퀴즈 · 출석 · 과제 제출
   // ════════════════════════════════════════════════════
   const ST = C.student;
   if (ST) {
@@ -2887,7 +3074,7 @@ window.SITE_CONFIG = {
             <button class="btn btn-ghost btn-sm" type="button" id="logout-btn">로그아웃</button>
           </div>`;
         $("#retry-btn").addEventListener("click", loadDashboard);
-        $("#logout-btn").addEventListener("click", () => { store.remove("user"); renderLogin(); });
+        $("#logout-btn").addEventListener("click", logout);
       }
     };
 
@@ -2904,30 +3091,169 @@ window.SITE_CONFIG = {
       return { cls: "upcoming", label: "예정" };
     };
 
+    // ── 실시간 퀴즈 카드 ──
+    // 교수자가 관리자 화면에서 문항을 열면, 몇 초마다 상태를 확인해 바로 보여 줍니다.
+    const QZ = C.quiz;
+    const quizQs = () => (QZ?.questions || []).map((q, i) => ({ ...q, id: String(q.id || `q${i + 1}`) }));
+    let quizTimer = null;
+    let quizKey = "";
+    let quizCurrent = null;
+    const stopQuiz = () => { clearInterval(quizTimer); quizTimer = null; quizKey = ""; };
+
+    const renderQuiz = (card, st) => {
+      const body = $(".quiz-body", card);
+      const qs = quizQs();
+      const qi = qs.findIndex((x) => x.id === st.openId);
+      const q = qs[qi];
+      quizCurrent = q || null;
+      if (!q) {
+        body.innerHTML = `<p class="quiz-wait">지금 진행 중인 퀴즈가 없어요.<small>수업 중 교수자가 퀴즈를 열면 여기에 바로 나타납니다.</small></p>`;
+        return;
+      }
+      const ans = Number(q.answer) - 1;
+      const answered = st.mine != null && st.mine !== "";
+      const mine = answered ? Number(st.mine) : null;
+      const total = Number(st.total) || 0;
+      const opts = (q.options || []).map((o, i) => {
+        const n = Number(st.counts?.[i]) || 0;
+        const pct = total ? Math.round((n / total) * 100) : 0;
+        const cls = st.reveal ? (i === ans ? "correct" : i === mine ? "wrong" : "") : i === mine ? "picked" : "";
+        const inner = `
+          ${st.reveal ? `<span class="qo-bar" style="width:${pct}%"></span>` : ""}
+          <span class="qo-no">${i + 1}</span><span class="qo-text">${esc(o)}</span>
+          ${st.reveal ? `<span class="qo-count">${n}명 · ${pct}%</span>` : i === mine ? `<span class="qo-count">내 답</span>` : ""}`;
+        return answered || st.reveal
+          ? `<div class="quiz-opt ${cls}">${inner}</div>`
+          : `<button class="quiz-opt" type="button" data-choice="${i}">${inner}</button>`;
+      }).join("");
+      let msg;
+      if (st.reveal) {
+        msg = !answered ? `<p class="quiz-msg">정답은 <b>${ans + 1}번</b>입니다. (이 문항에는 답하지 않았어요)</p>`
+          : mine === ans ? `<p class="quiz-msg good">🎉 정답입니다!</p>`
+          : `<p class="quiz-msg bad">아쉬워요. 정답은 <b>${ans + 1}번</b>입니다.</p>`;
+      } else if (answered) {
+        msg = `<p class="quiz-msg">✅ 답을 제출했어요. 교수자가 정답을 공개할 때까지 기다려 주세요. <small>지금까지 ${total}명 응답</small></p>`;
+      } else {
+        msg = `<p class="quiz-msg">보기를 눌러 답을 고르세요. 한 번 고르면 바꿀 수 없어요.</p>`;
+      }
+      body.innerHTML = `
+        <p class="quiz-q"><span class="quiz-badge">Q${qi + 1}</span>${esc(q.question)}</p>
+        <div class="quiz-opts">${opts}</div>
+        ${msg}
+        ${st.reveal && q.explanation ? `<p class="quiz-exp">💡 ${esc(q.explanation)}</p>` : ""}`;
+    };
+
+    const refreshQuiz = async () => {
+      const card = $("#quiz-card");
+      if (!card || !user()) { stopQuiz(); return; }
+      let st;
+      try {
+        st = await db.quizState(user().id);
+      } catch (err) {
+        $(".quiz-body", card).innerHTML = `<p class="quiz-wait">퀴즈 상태를 확인하지 못했습니다.<small>${esc(err.message)}</small></p>`;
+        quizKey = "";
+        return;
+      }
+      const key = JSON.stringify(st);
+      if (key === quizKey) return; // 바뀐 게 없으면 화면을 그대로 둡니다
+      quizKey = key;
+      renderQuiz(card, st);
+    };
+
+    const startQuiz = () => {
+      stopQuiz();
+      const card = $("#quiz-card");
+      if (!card) return;
+      card.addEventListener("click", async (e) => {
+        const b = e.target.closest("[data-choice]");
+        if (!b || !quizCurrent) return;
+        const choice = Number(b.dataset.choice);
+        card.querySelectorAll("[data-choice]").forEach((x) => { x.disabled = true; });
+        try {
+          await db.quizAnswer({ id: user().id, name: user().name, qid: quizCurrent.id, choice, correct: choice === Number(quizCurrent.answer) - 1 });
+          toast("답을 제출했어요.");
+        } catch (err) {
+          toast(err.message);
+        }
+        quizKey = "";
+        refreshQuiz();
+      });
+      refreshQuiz();
+      quizTimer = setInterval(refreshQuiz, Math.max(2, Number(QZ?.refreshSeconds) || 5) * 1000);
+    };
+
+    // ── 헤더의 로그인 버튼 / 로그인한 이름 ──
+    const headerUser = $("#header-user");
+    const loginDlg = $("#student-login");
+
+    const renderHeaderUser = () => {
+      if (!headerUser) return;
+      const u = user();
+      headerUser.innerHTML = u
+        ? `<a class="hu-name" href="#student" title="학습자 공간으로 이동" aria-label="${esc(u.name)}님 · 학습자 공간으로 이동">
+             <span class="hu-avatar" aria-hidden="true">${esc(u.name.charAt(0))}</span><span class="hu-text">${esc(u.name)}님</span>
+           </a>
+           <button class="hu-btn" type="button" data-act="logout">로그아웃</button>`
+        : `<button class="hu-btn hu-login" type="button" data-act="login" aria-label="학습자 로그인" title="학습자 로그인">
+             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.8-3.6-5-8-5Z"/></svg>
+             <span>학습자 로그인</span>
+           </button>`;
+    };
+    headerUser?.addEventListener("click", (e) => {
+      const act = e.target.closest("[data-act]")?.dataset.act;
+      if (act === "login") openLogin();
+      if (act === "logout") logout();
+    });
+
+    const logout = () => {
+      store.remove("user");
+      me = { attendance: {}, submissions: {} };
+      renderLogin();
+      renderHeaderUser();
+      toast("로그아웃되었습니다.");
+    };
+
+    // 학습자 공간: 로그인 전에는 안내와 로그인 버튼만 보여 줍니다.
     const renderLogin = () => {
+      stopQuiz();
       el.innerHTML = `
         <div class="container">
           ${sectionHead(ST.heading, ST.lead)}
-          <form class="card login-card" novalidate>
+          <div class="card login-card">
             <div class="login-icon" aria-hidden="true">🔐</div>
-            <h3>수강생 로그인</h3>
-            <div class="field">
-              <label for="login-id">학번<span class="req" aria-hidden="true">*</span></label>
-              <input id="login-id" name="id" inputmode="numeric" autocomplete="username" placeholder="2025123456" aria-describedby="login-id-err">
-              <p class="field-error" id="login-id-err"></p>
-            </div>
-            <div class="field">
-              <label for="login-name">이름<span class="req" aria-hidden="true">*</span></label>
-              <input id="login-name" name="name" autocomplete="name" placeholder="홍길동" aria-describedby="login-name-err">
-              <p class="field-error" id="login-name-err"></p>
-            </div>
-            <button class="btn btn-primary btn-lg" type="submit">로그인</button>
-            ${localNote("학번·이름은 이 브라우저에만 저장되며, 비밀번호 확인 없이 이름표처럼 사용됩니다.")}
-            ${isLocal ? "" : `<p class="local-note">ℹ️ 비밀번호 없이 학번·이름으로 기록을 구분합니다. 다른 사람의 학번으로 로그인하지 마세요.</p>`}
-          </form>
+            <h3>학습자 로그인이 필요해요</h3>
+            <p class="login-hint">출석 체크와 과제 제출은 로그인한 뒤 이용할 수 있어요.<br>화면 위쪽의 <b>학습자 로그인</b> 버튼을 눌러도 됩니다.</p>
+            <button class="btn btn-primary btn-lg" type="button" id="open-login-btn">로그인하기</button>
+          </div>
         </div>`;
+      $("#open-login-btn").addEventListener("click", openLogin);
+    };
 
-      const form = $(".login-card", el);
+    const openLogin = () => {
+      if (!loginDlg) return;
+      loginDlg.innerHTML = `
+        <form class="admin-login-form" novalidate>
+          <div class="popup-art" aria-hidden="true">🎓</div>
+          <h2 id="student-login-title">학습자 로그인</h2>
+          <div class="field">
+            <label for="login-id">학번<span class="req" aria-hidden="true">*</span></label>
+            <input id="login-id" name="id" inputmode="numeric" autocomplete="username" placeholder="2025123456" aria-describedby="login-id-err">
+            <p class="field-error" id="login-id-err"></p>
+          </div>
+          <div class="field">
+            <label for="login-name">이름<span class="req" aria-hidden="true">*</span></label>
+            <input id="login-name" name="name" autocomplete="name" placeholder="홍길동" aria-describedby="login-name-err">
+            <p class="field-error" id="login-name-err"></p>
+          </div>
+          <div class="admin-login-actions">
+            <button class="btn btn-ghost" type="button" data-close>취소</button>
+            <button class="btn btn-primary" type="submit">로그인</button>
+          </div>
+          ${localNote("학번·이름은 이 브라우저에만 저장되며, 비밀번호 확인 없이 이름표처럼 사용됩니다.")}
+          ${isLocal ? "" : `<p class="local-note">ℹ️ 비밀번호 없이 학번·이름으로 기록을 구분합니다. 다른 사람의 학번으로 로그인하지 마세요.</p>`}
+        </form>`;
+      $("[data-close]", loginDlg).addEventListener("click", () => loginDlg.close());
+      const form = $("form", loginDlg);
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const id = $("#login-id").value.trim();
@@ -2952,9 +3278,14 @@ window.SITE_CONFIG = {
           return;
         }
         store.set("user", { id, name });
+        loginDlg.close();
         renderDashboard();
+        renderHeaderUser();
+        el.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
         toast(`${name}님, 환영합니다!`);
       });
+      loginDlg.showModal();
+      $("#login-id").focus();
     };
 
     const renderDashboard = () => {
@@ -3002,6 +3333,15 @@ window.SITE_CONFIG = {
             </dl>
             <button class="btn btn-ghost btn-sm" type="button" id="logout-btn">로그아웃</button>
           </div>
+
+          ${QZ ? `
+          <div class="card quiz-card" id="quiz-card">
+            <div class="quiz-head">
+              <h3 class="card-title">🧠 ${esc(QZ.heading || "실시간 퀴즈")}</h3>
+              <span class="quiz-live"><i aria-hidden="true"></i>실시간</span>
+            </div>
+            <div class="quiz-body" aria-live="polite"><p class="quiz-wait">불러오는 중…</p></div>
+          </div>` : ""}
 
           <div class="student-grid">
             <div class="card">
@@ -3056,11 +3396,8 @@ window.SITE_CONFIG = {
           </div>
         </div>`;
 
-      $("#logout-btn").addEventListener("click", () => {
-        store.remove("user");
-        renderLogin();
-        toast("로그아웃되었습니다.");
-      });
+      $("#logout-btn").addEventListener("click", logout);
+      startQuiz();
 
       $("#checkin-btn")?.addEventListener("click", async (e) => {
         const btn = e.currentTarget;
@@ -3160,6 +3497,7 @@ window.SITE_CONFIG = {
 
     if (user()) loadDashboard();
     else renderLogin();
+    renderHeaderUser();
   }
 
   // ════════════════════════════════════════════════════
@@ -3291,6 +3629,7 @@ window.SITE_CONFIG = {
  * - 자물쇠 버튼 → 비밀번호 확인(PBKDF2 해시 비교) → 관리자 화면
  * - 사이트 편집 · 공지 · 수강생 명단 · 출석/과제/신청 내역(CSV 내려받기) · 설정 파일 저장/불러오기 · 비밀번호 변경
  * - AI API 키 (Claude · BAZE, 이 브라우저에만 저장)
+ * - 실시간 퀴즈 진행 (진행하기 · 정답 공개 · 종료 · 응답 현황)
  * 내용 수정은 config.js 에서 하세요. 이 파일은 고칠 필요가 없습니다.
  */
 (function () {
@@ -3539,9 +3878,11 @@ window.SITE_CONFIG = {
   const TABS = [
     ["edit", "✏️ 사이트 편집"],
     ["notices", "📢 공지"],
+    ["quiz", "🧠 퀴즈"],
     ["roster", "👥 수강생 명단"],
     ["attendance", "✅ 출석"],
-    ["submissions", "📝 과제"],
+    ["tasks", "🗓️ 주차별 과제"],
+    ["submissions", "📝 과제 제출"],
     ["applications", "📋 수강 신청"],
     ["file", "💾 설정 파일"],
     ["password", "🔑 비밀번호"],
@@ -3584,8 +3925,10 @@ window.SITE_CONFIG = {
     $("#ap-lock").addEventListener("click", () => {
       session.clear();
       panel.close();
+      editShortcuts();
       toast("관리자 화면을 잠갔습니다.");
     });
+    editShortcuts();
     panel.querySelector(".ap-tabs").addEventListener("click", (e) => {
       const b = e.target.closest("[data-tab]");
       if (b) showTab(b.dataset.tab);
@@ -3600,9 +3943,121 @@ window.SITE_CONFIG = {
     showTab(current);
   };
 
+  // 관리자로 들어와 있는 동안 '과제 및 평가' 섹션에 바로 고치기 버튼을 보여 줍니다.
+  const SHORTCUTS = [["enroll", "enroll", "✏️ 평가 항목 수정"], ["materials", "materials", "✏️ 자료 수정"]];
+  const editShortcuts = () => {
+    SHORTCUTS.forEach(([secId, key, text]) => {
+      const head = $(`#${secId} .section-head`);
+      if (!head) return;
+      let b = $(".admin-edit-btn", head);
+      if (!session.get()) { b?.remove(); return; }
+      if (b) return;
+      b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn btn-ghost btn-sm admin-edit-btn";
+      b.textContent = text;
+      b.addEventListener("click", () => {
+        editSection = key in draft ? key : "site";
+        session.set({ ...session.get(), tab: "edit" });
+        openPanel();
+      });
+      head.append(b);
+    });
+  };
+
   const closePanel = () => {
     if (dirty && !confirm("적용하지 않은 편집 내용이 있습니다. 그래도 닫을까요? (다시 열면 이어서 편집할 수 있습니다)")) return;
     panel.close();
+  };
+  panel.addEventListener("close", () => clearInterval(quizAdminTimer));
+
+  // ════════════════════════════════════════════════════
+  //  탭. 실시간 퀴즈 진행 (진행하기 → 정답 공개 → 종료)
+  // ════════════════════════════════════════════════════
+  let quizAdminTimer = null;
+  const tabQuiz = (body) => {
+    const qs = (C.quiz?.questions || []).map((q, i) => ({ ...q, id: String(q.id || `q${i + 1}`) }));
+    body.innerHTML = `
+      ${toolbar("실시간 퀴즈", `
+        <button class="btn btn-ghost btn-sm" type="button" data-act="edit-q">✏️ 문항 편집</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-act="refresh">새로고침</button>`)}
+      <p class="ap-help">문항의 <b>진행하기</b>를 누르면 학습자 공간에 바로 나타납니다. 응답이 모이면 <b>정답 공개</b>, 끝나면 <b>종료</b>를 누르세요.
+        한 번에 한 문항만 진행됩니다. 응답 현황은 몇 초마다 자동으로 새로 고쳐집니다.
+        ${isLocal ? "<br>체험 모드에서는 이 브라우저 안에서만 동작합니다. 같은 브라우저의 다른 탭에서 학습자로 로그인해 시험해 볼 수 있습니다." : ""}</p>
+      <div class="quiz-admin-list"><p class="ap-loading">불러오는 중…</p></div>`;
+    const list = $(".quiz-admin-list", body);
+    if (!qs.length) {
+      list.innerHTML = `<p class="muted">문항이 없습니다. <b>✏️ 문항 편집</b>에서 만들어 주세요.</p>`;
+      return;
+    }
+
+    let lastKey = "";
+    const load = async (force) => {
+      if (!body.isConnected) { clearInterval(quizAdminTimer); return; }
+      let data;
+      try { data = await db.quizResults(pw()); }
+      catch (x) { list.innerHTML = `<p class="ap-error">퀴즈 현황을 불러오지 못했습니다: ${esc(x.message)}</p>`; lastKey = ""; return; }
+      const key = JSON.stringify(data);
+      if (!force && key === lastKey) return;
+      lastKey = key;
+      const st = data.state || {};
+      list.innerHTML = qs.map((q, qi) => {
+        const r = (data.results || {})[q.id] || { counts: {}, total: 0 };
+        const total = Number(r.total) || 0;
+        const ans = Number(q.answer) - 1;
+        const open = st.openId === q.id;
+        const chip = open ? (st.reveal ? `<span class="notice-tag is-popup">정답 공개 중</span>` : `<span class="notice-tag is-pin">진행 중</span>`) : "";
+        const bars = (q.options || []).map((o, i) => {
+          const n = Number(r.counts?.[i]) || 0;
+          const pct = total ? Math.round((n / total) * 100) : 0;
+          return `
+            <li class="${i === ans ? "is-answer" : ""}">
+              <span class="qa-label">${i + 1}. ${esc(o)}${i === ans ? " ✔" : ""}</span>
+              <span class="qa-track"><span style="width:${pct}%"></span></span>
+              <span class="qa-num">${n}명</span>
+            </li>`;
+        }).join("");
+        const btns = open
+          ? `${st.reveal ? "" : `<button class="btn btn-primary btn-sm" type="button" data-act="reveal" data-id="${esc(q.id)}">정답 공개</button>`}
+             <button class="btn btn-ghost btn-sm" type="button" data-act="close">종료</button>`
+          : `<button class="btn btn-primary btn-sm" type="button" data-act="open" data-id="${esc(q.id)}">진행하기</button>`;
+        return `
+          <div class="ap-card quiz-admin-item${open ? " is-open" : ""}">
+            <h4>Q${qi + 1}. ${esc(q.question)} ${chip}</h4>
+            <ul class="qa-bars">${bars}</ul>
+            <p class="muted">응답 ${total}명${total ? ` · 정답률 ${Math.round(((Number(r.counts?.[ans]) || 0) / total) * 100)}%` : ""}</p>
+            <div class="ai-actions">
+              ${btns}
+              <button class="btn btn-ghost btn-sm" type="button" data-act="reset" data-id="${esc(q.id)}"${total ? "" : " disabled"}>응답 초기화</button>
+            </div>
+          </div>`;
+      }).join("");
+    };
+
+    body.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-act]");
+      if (!b) return;
+      const act = b.dataset.act;
+      const id = b.dataset.id;
+      if (act === "edit-q") { editSection = "quiz" in draft ? "quiz" : "site"; showTab("edit"); return; }
+      try {
+        b.disabled = true;
+        if (act === "open") { await db.quizControl(pw(), { openId: id, reveal: false }); toast("문항을 열었습니다. 학습자 화면에 곧 나타납니다."); }
+        if (act === "reveal") { await db.quizControl(pw(), { openId: id, reveal: true }); toast("정답을 공개했습니다."); }
+        if (act === "close") { await db.quizControl(pw(), { openId: "", reveal: false }); toast("퀴즈를 종료했습니다."); }
+        if (act === "reset") {
+          if (!confirm("이 문항의 응답을 모두 지울까요? 되돌릴 수 없습니다.")) { b.disabled = false; return; }
+          await db.quizReset(pw(), id);
+          toast("응답을 지웠습니다.");
+        }
+      } catch (x) {
+        toast(`처리하지 못했습니다: ${x.message}`);
+      }
+      load(true);
+    });
+
+    load(true);
+    quizAdminTimer = setInterval(load, Math.max(2, Number(C.quiz?.refreshSeconds) || 5) * 1000);
   };
 
   const setDirty = (v) => {
@@ -3626,7 +4081,8 @@ window.SITE_CONFIG = {
     const old = $("#ap-body");
     const body = old.cloneNode(false);
     old.replaceWith(body);
-    ({ edit: tabEdit, notices: tabNotices, roster: tabRoster, attendance: tabAttendance, submissions: tabSubmissions, applications: tabApplications, file: tabFile, password: tabPassword, ai: tabAI })[id](body);
+    clearInterval(quizAdminTimer);
+    ({ edit: tabEdit, notices: tabNotices, quiz: tabQuiz, roster: tabRoster, attendance: tabAttendance, tasks: tabTasks, submissions: tabSubmissions, applications: tabApplications, file: tabFile, password: tabPassword, ai: tabAI })[id](body);
   };
 
   // ── 공통: CSV 내려받기 ─────────────────────────────
@@ -3719,15 +4175,15 @@ window.SITE_CONFIG = {
   const SECTIONS = [
     ["site", "기본 정보"], ["keyInfo", "핵심 정보 4칸"], ["nav", "상단 메뉴"], ["about", "프로그램 소개"],
     ["curriculum", "커리큘럼·주차"], ["schedule", "수업 일정"], ["poll", "투표"], ["tools", "AI 도구"],
-    ["enroll", "수강 안내"], ["applyForm", "수강 신청서"], ["faq", "FAQ"], ["instructor", "교수자"],
-    ["footer", "하단"], ["popup", "안내 팝업"], ["welcome", "첫 방문 환영"], ["student", "수강생 공간"],
-    ["participation", "저장 방식"],
+    ["materials", "교재 및 참고자료"], ["enroll", "과제 및 평가"], ["applyForm", "수강생 정보"], ["faq", "FAQ"], ["instructor", "교수자"],
+    ["footer", "하단"], ["popup", "안내 팝업"], ["welcome", "첫 방문 환영"], ["student", "학습자 공간"],
+    ["quiz", "실시간 퀴즈"], ["participation", "저장 방식"],
   ];
   const LABELS = {
     title: "제목", subtitle: "부제", shortTitle: "짧은 이름(헤더)", organization: "기관", badge: "배지 문구",
     description: "설명", ctaPrimary: "첫 번째 버튼", ctaSecondary: "두 번째 버튼", label: "이름", href: "링크",
     icon: "아이콘(이모지)", value: "값", note: "보조 문구", id: "ID (연결용, 바꾸지 마세요)", heading: "섹션 제목",
-    lead: "안내 문구", stats: "숫자 카드", suffix: "단위", benefitsHeading: "장점 제목", benefits: "장점 슬라이드",
+    lead: "안내 문구", stats: "숫자 카드", suffix: "단위", benefitsHeading: "학습활동 제목", benefits: "학습활동 카드",
     objectivesHeading: "학습목표 제목", objectivesLead: "학습목표 안내", objectives: "학습목표",
     text: "내용", modules: "단계 카드", phase: "단계", weeks: "주차", topics: "학습 내용", weeksHeading: "주차별 제목",
     weeksLead: "주차별 안내", videos: "참고 영상", url: "주소", assignment: "과제", due: "마감 (YYYY-MM-DD HH:MM)",
@@ -3745,14 +4201,17 @@ window.SITE_CONFIG = {
     lateAfterMinutes: "몇 분 뒤부터 지각", alwaysOpen: "언제나 출석 가능 (테스트용)", askCode: "출석 코드 사용",
     upload: "과제 업로드", accept: "허용 파일 형식", maxSizeMB: "최대 크기 (MB)", allowLate: "지각 제출 허용",
     date: "날짜", sheetLabel: "시트 열 이름", keyInfo: "핵심 정보", nav: "메뉴",
+    percent: "비율 (%)", questions: "문항", question: "질문", answer: "정답 번호 (1부터)", explanation: "해설",
+    refreshSeconds: "학습자 화면 새로 확인 간격 (초)",
   };
-  const LONG = new Set(["description", "text", "bio", "a", "body", "lead", "note", "successText", "message", "patternMessage"]);
+  const LONG = new Set(["description", "text", "bio", "a", "body", "lead", "note", "successText", "message", "patternMessage", "question", "explanation"]);
   // 배열에 새 항목을 넣을 때 쓸 모양
   const TEMPLATES = {
     videos: { title: "", url: "" },
     contacts: { icon: "", label: "", value: "", href: "" },
     stats: { value: 0, suffix: "", label: "" },
     skipDates: "", topics: "", career: "", affiliationEn: "", points: "", accept: "",
+    questions: { id: "", question: "", options: ["", "", "", ""], answer: 1, explanation: "" },
   };
   // 있어도 되고 없어도 되는 항목 (부모 배열 이름 → 항목 → 기본값)
   const OPTIONAL = {
@@ -3917,6 +4376,8 @@ window.SITE_CONFIG = {
         if (act === "add") {
           const key = b.dataset.key;
           arr.push(key in TEMPLATES ? clone(TEMPLATES[key]) : arr.length ? blankLike(arr[arr.length - 1]) : "");
+          // 퀴즈 문항은 응답 기록을 구분할 고유 id 가 필요합니다.
+          if (key === "questions") arr[arr.length - 1].id = `q${Date.now().toString(36)}`;
         }
         if (act === "del") { if (!confirm(`${i + 1}번째 항목을 삭제할까요?`)) return; arr.splice(i, 1); }
         if (act === "up" && i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
@@ -4035,6 +4496,128 @@ window.SITE_CONFIG = {
       } catch (err) { alert(`시트에 반영하지 못했습니다: ${err.message}`); return; }
       toast(act === "del" ? "공지를 삭제했습니다." : act === "pin" ? "고정 상태를 바꿨습니다." : "팝업 설정을 바꿨습니다.");
       showTab("notices");
+    });
+  };
+
+  // ════════════════════════════════════════════════════
+  //  탭. 주차별 과제 만들기 · 수정 · 삭제
+  //  과제는 config 의 curriculum.weeks[n].assignment 에 들어갑니다.
+  // ════════════════════════════════════════════════════
+  let taskEditIndex = null; // 과제를 만들거나 고치는 중인 주차 (0부터)
+  const toInputDT = (s) => String(s || "").trim().replace(" ", "T").slice(0, 16);
+  const fromInputDT = (s) => String(s || "").replace("T", " ").slice(0, 16);
+  const dtString = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  // 마감 기본값: 다음 수업 전날 23:59 (마지막 주차는 수업 6일 뒤)
+  const defaultDue = (i) => {
+    const next = weeks[i + 1];
+    const d = new Date(next ? next.date : weeks[i].date);
+    d.setDate(d.getDate() + (next ? -1 : 6));
+    d.setHours(23, 59, 0, 0);
+    return dtString(d);
+  };
+
+  // 저장하면 이 브라우저에 바로 적용하고, 화면 전체(커리큘럼·학습자 공간)를 새로 그립니다.
+  const persistAssignment = (i, assignment) => {
+    const apply = (cfg) => {
+      const w = cfg.curriculum.weeks[i];
+      if (assignment) w.assignment = assignment;
+      else delete w.assignment;
+    };
+    apply(draft);
+    apply(C);
+    if (!saveOverride(dirty ? draft : clone(C))) { alert("브라우저 저장 공간에 저장하지 못했습니다."); return; }
+    session.set({ ...session.get(), tab: "tasks", reopen: true });
+    location.reload();
+  };
+
+  const tabTasks = (body) => {
+    const cfgWeeks = C.curriculum?.weeks || [];
+    const editing = taskEditIndex != null && cfgWeeks[taskEditIndex] ? taskEditIndex : null;
+    if (editing == null) taskEditIndex = null;
+    const wk = editing != null ? cfgWeeks[editing] : null;
+    const a = wk?.assignment || null;
+    const count = cfgWeeks.filter((w) => w.assignment).length;
+
+    body.innerHTML = `
+      ${editing != null ? `
+        ${toolbar(`${editing + 1}주차 과제 ${a ? "수정" : "만들기"}`, "")}
+        <form class="ap-card task-form is-editing" novalidate>
+          <p class="muted">${editing + 1}주차 · ${esc(fmtDate(weeks[editing].date))} · ${esc(wk.title)}</p>
+          <div class="field"><label for="tk-title">과제 제목</label>
+            <input id="tk-title" maxlength="60" value="${esc(a?.title || "")}" placeholder="예: 성찰노트(3)"></div>
+          <div class="field"><label for="tk-desc">설명</label>
+            <textarea id="tk-desc" rows="4" placeholder="무엇을, 어떤 형식으로 제출하는지 적어 주세요.">${esc(a?.description || "")}</textarea></div>
+          <div class="task-form-row">
+            <div class="field"><label for="tk-due">마감</label>
+              <input id="tk-due" type="datetime-local" value="${esc(toInputDT(a?.due || defaultDue(editing)))}"></div>
+            <div class="field"><label for="tk-url">제출 링크 (선택)</label>
+              <input id="tk-url" type="url" value="${esc(a?.submitUrl || "")}" placeholder="비워 두면 학습자 공간에서 파일로 제출"></div>
+          </div>
+          <p class="field-error" id="tk-err" role="alert"></p>
+          <div class="ai-actions">
+            <button class="btn btn-ghost" type="button" data-cancel>취소</button>
+            <button class="btn btn-primary" type="submit">${a ? "수정 저장" : "과제 만들기"}</button>
+          </div>
+        </form>` : ""}
+      ${toolbar(`주차별 과제 (${count}개)`, "")}
+      <p class="ap-help">주차마다 <b>과제 만들기</b>를 누르면 강의 계획의 주차 카드와 학습자 공간의 과제 제출 목록에 함께 나타납니다.
+        저장하면 이 브라우저에 바로 적용됩니다. 모든 학습자에게 반영하려면 <b>💾 설정 파일</b> 탭에서 ${DEPLOY} 를 내려받아 사이트에 올려 주세요.</p>
+      <ul class="ap-notice-list task-list">
+        ${cfgWeeks.map((w, i) => {
+          const due = weeks[i]?.due;
+          return `
+          <li${i === editing ? ` class="is-editing"` : ""}>
+            <div>
+              <span class="notice-tag">${i + 1}주차</span>
+              <time>${esc(fmtDate(weeks[i].date))}</time> <strong>${esc(w.title)}</strong>
+              ${w.assignment
+                ? `<p>📝 <b>${esc(w.assignment.title)}</b> · 마감 ${due ? `${esc(fmtDate(due))} ${pad(due.getHours())}:${pad(due.getMinutes())}` : esc(w.assignment.due)}</p>`
+                : `<p class="muted">과제 없음</p>`}
+            </div>
+            <div class="ap-row-actions">
+              ${w.assignment
+                ? `<button class="btn btn-ghost btn-sm" type="button" data-act="edit" data-i="${i}">수정</button>
+                   <button class="btn btn-ghost btn-sm danger" type="button" data-act="del" data-i="${i}">삭제</button>`
+                : `<button class="btn btn-primary btn-sm" type="button" data-act="edit" data-i="${i}">+ 과제 만들기</button>`}
+            </div>
+          </li>`;
+        }).join("")}
+      </ul>`;
+
+    const form = $(".task-form", body);
+    if (form) {
+      form.querySelector("[data-cancel]").addEventListener("click", () => { taskEditIndex = null; showTab("tasks"); });
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const err = $("#tk-err");
+        const title = $("#tk-title").value.trim();
+        const description = $("#tk-desc").value.trim();
+        const due = fromInputDT($("#tk-due").value);
+        const submitUrl = $("#tk-url").value.trim();
+        if (!title) { err.textContent = "과제 제목을 입력해 주세요."; $("#tk-title").focus(); return; }
+        if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(due)) { err.textContent = "마감 날짜와 시각을 골라 주세요."; $("#tk-due").focus(); return; }
+        if (submitUrl && !/^https?:\/\//.test(submitUrl)) { err.textContent = "제출 링크는 https:// 로 시작해야 합니다."; $("#tk-url").focus(); return; }
+        const next = { ...(a || {}), title, description, due };
+        if (submitUrl) next.submitUrl = submitUrl;
+        else delete next.submitUrl;
+        taskEditIndex = null;
+        toast(a ? "과제를 수정했습니다." : "과제를 만들었습니다.");
+        persistAssignment(editing, next);
+      });
+      form.scrollIntoView({ block: "nearest" });
+      $("#tk-title").focus();
+    }
+
+    $(".task-list", body).addEventListener("click", (e) => {
+      const b = e.target.closest("[data-act]");
+      if (!b) return;
+      const i = Number(b.dataset.i);
+      if (b.dataset.act === "edit") { taskEditIndex = i; showTab("tasks"); return; }
+      if (b.dataset.act === "del") {
+        if (!confirm(`${i + 1}주차 과제 '${cfgWeeks[i].assignment.title}' 를 삭제할까요?\n이미 제출된 파일과 기록은 지워지지 않습니다.`)) return;
+        if (taskEditIndex === i) taskEditIndex = null;
+        persistAssignment(i, null);
+      }
     });
   };
 
@@ -4549,6 +5132,8 @@ window.SITE_CONFIG = ${JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c")};
       finally { btn.disabled = false; btn.textContent = "보내기"; }
     });
   };
+
+  editShortcuts();
 
   // 미리보기 적용 뒤 새로고침되면 관리자 화면을 다시 엽니다.
   const s = session.get();
