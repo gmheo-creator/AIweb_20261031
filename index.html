@@ -932,6 +932,14 @@ button.quiz-opt:hover:not(:disabled) { border-color: var(--purple-400); backgrou
   font-size: 13px; color: #7a5600; box-shadow: var(--shadow);
 }
 .preview-chip button { border: 0; background: #7a5600; color: #fff; border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 12px; cursor: pointer; }
+.preview-chip button[data-act="publish"] { background: var(--navy); }
+/* 저장된 사이트 설정이 새로 바뀌었을 때 알림 */
+.update-bar {
+  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 46;
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 999px;
+  background: var(--navy); color: #fff; font-size: 14px; box-shadow: var(--shadow); max-width: calc(100% - 32px);
+}
+.update-bar button { border: 0; border-radius: 999px; padding: 5px 14px; background: #fff; color: var(--navy); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 
 /* ── 관리자 로그인 ─────────────────────────────────── */
 .admin-login {
@@ -1430,7 +1438,7 @@ window.SITE_CONFIG = {
     objectivesHeading: "학습목표",
     objectivesLead: "본 수업을 마친 학습자는 다음과 같은 목표를 달성할 수 있습니다.",
     objectives: [
-      "교수자에게 필요한 기본 역량과 교육학 이론을 바탕으로 수업 설계 모형(ADDIE)을 적용하여 자신의 전공에 맞는 강의계획안을 효과적으로 개발할 수 있습니다.",
+      "교수자에게 필요한 기본 역량과 이론을 바탕으로 수업 설계 모형(ADDIE)을 적용하여 강의계획안을 효과적으로 개발할 수 있습니다.",
       "다양한 학습 목표와 학습자 특성에 적합한 교수법 및 전략을 선택하여 적용할 수 있습니다.",
       "생성형 AI 등 최신 에듀테크 도구를 수업 설계, 운영, 평가의 과정에 활용할 수 있습니다.",
       "강의계획안을 바탕으로 실제 수업을 시연하고, 동료 피드백을 바탕으로 재설계할 수 있습니다.",
@@ -1831,8 +1839,9 @@ window.SITE_CONFIG = {
   <script data-file="app.js">/*
  * config.js 의 내용을 읽어 화면을 그립니다.
  * 내용 수정은 config.js 에서 하세요. 이 파일은 고칠 필요가 없습니다.
+ * (Google 시트 연결 시 저장된 설정을 먼저 받아 온 뒤 실행됩니다 → admin.js 맨 아래 '시작' 부분)
  */
-(function () {
+(window.SITE_BOOT = window.SITE_BOOT || []).push(function () {
   "use strict";
 
   // 관리자 화면에서 고친 설정이 이 브라우저에 미리보기로 저장되어 있으면 그것을 씁니다.
@@ -2459,13 +2468,13 @@ window.SITE_CONFIG = {
 
   // participate.js 에서 함께 쓰는 값과 도우미
   window.SITE = { esc, $, sectionHead, reduceMotion, weeks, dateKey, parseDate, withTime, fmtDate, fmtDateTime, countdownHTML };
-})();
+});
 </script>
   <script data-file="participate.js">/*
  * 수강생 참여 기능: 투표 · 수강 신청서 · 로그인/실시간 퀴즈/출석/과제 제출 · 안내 팝업 · 첫 방문 폭죽
  * 내용 수정은 config.js 에서 하세요. 이 파일은 고칠 필요가 없습니다.
  */
-(function () {
+(window.SITE_BOOT = window.SITE_BOOT || []).push(function () {
   "use strict";
 
   const C = window.SITE_CONFIG;
@@ -2649,6 +2658,8 @@ window.SITE_CONFIG = {
     async saveNotice(password, notice) { return remote("saveNotice", { password, notice }); },
     async deleteNotice(password, id) { return remote("deleteNotice", { password, id }); },
     async changeAdminPassword(password, newPassword) { return remote("changeAdminPassword", { password, newPassword }); },
+    async saveSiteConfig(password, config) { return remote("saveSiteConfig", { password, config: JSON.stringify(config) }); },
+    async clearSiteConfig(password) { return remote("clearSiteConfig", { password }); },
     async quizState(id) { return remote("quizState", id ? { id } : {}, "GET"); },
     async quizAnswer({ id, name, qid, choice, correct }) { return remote("quizAnswer", { id, name, qid, choice, correct: Boolean(correct) }); },
     async quizControl(password, { openId, reveal }) { return remote("quizControl", { password, openId: openId || "", reveal: Boolean(reveal) }); },
@@ -3622,7 +3633,7 @@ window.SITE_CONFIG = {
     };
     requestAnimationFrame(frame);
   }
-})();
+});
 </script>
   <script data-file="admin.js">/*
  * 공지사항 표시 + 관리자 화면
@@ -3630,9 +3641,10 @@ window.SITE_CONFIG = {
  * - 사이트 편집 · 공지 · 수강생 명단 · 출석/과제/신청 내역(CSV 내려받기) · 설정 파일 저장/불러오기 · 비밀번호 변경
  * - AI API 키 (Claude · BAZE, 이 브라우저에만 저장)
  * - 실시간 퀴즈 진행 (진행하기 · 정답 공개 · 종료 · 응답 현황)
+ * - Google 시트에 사이트 설정 저장 (저장하면 모든 방문자에게 반영)
  * 내용 수정은 config.js 에서 하세요. 이 파일은 고칠 필요가 없습니다.
  */
-(function () {
+(window.SITE_BOOT = window.SITE_BOOT || []).push(function () {
   "use strict";
 
   const C = window.SITE_CONFIG;
@@ -3778,8 +3790,13 @@ window.SITE_CONFIG = {
   if (window.SITE_CONFIG_ORIGINAL) {
     const chip = document.createElement("div");
     chip.className = "preview-chip";
-    chip.innerHTML = `<span>👀 관리자 미리보기 적용 중 · 이 브라우저에서만 보입니다</span><button type="button">원래대로</button>`;
-    chip.querySelector("button").addEventListener("click", () => {
+    chip.innerHTML = `<span>👀 관리자 미리보기 적용 중 · 이 브라우저에서만 보입니다</span>${isLocal ? "" : `<button type="button" data-act="publish">저장</button>`}<button type="button" data-act="reset">원래대로</button>`;
+    chip.querySelector('[data-act="publish"]')?.addEventListener("click", (e) => {
+      if (!session.get()) { alert("저장하려면 먼저 🔒 관리자 로그인을 해 주세요."); return; }
+      if (!confirm("미리보기 중인 내용을 저장해 모든 방문자에게 반영할까요?")) return;
+      publishConfig(clone(C), e.currentTarget);
+    });
+    chip.querySelector('[data-act="reset"]').addEventListener("click", () => {
       if (!confirm("이 브라우저에 저장된 편집 내용을 지우고 원래 설정으로 돌아갈까요?")) return;
       try { localStorage.removeItem(OVERRIDE_KEY); } catch { /* 무시 */ }
       location.reload();
@@ -3913,7 +3930,8 @@ window.SITE_CONFIG = {
         <div class="ap-dirty" hidden>
           <span>저장하지 않은 편집 내용이 있습니다.</span>
           <button class="btn btn-ghost btn-sm" type="button" data-act="discard">되돌리기</button>
-          <button class="btn btn-primary btn-sm" type="button" data-act="apply">미리보기 적용</button>
+          <button class="btn ${isLocal ? "btn-primary" : "btn-ghost"} btn-sm" type="button" data-act="apply">미리보기 적용</button>
+          ${isLocal ? "" : `<button class="btn btn-primary btn-sm" type="button" data-act="publish">💾 저장</button>`}
         </div>
         <nav class="ap-tabs" role="tablist" aria-label="관리 메뉴">
           ${TABS.map(([id, label]) => `<button type="button" role="tab" id="tab-${id}" data-tab="${id}" aria-controls="ap-body">${label}</button>`).join("")}
@@ -3936,11 +3954,37 @@ window.SITE_CONFIG = {
     panel.querySelector(".ap-dirty").addEventListener("click", (e) => {
       const act = e.target.closest("[data-act]")?.dataset.act;
       if (act === "apply") applyDraft();
+      if (act === "publish") publishConfig(draft, e.target);
       if (act === "discard" && confirm("편집한 내용을 모두 되돌릴까요?")) { draft = clone(C); setDirty(false); showTab(current); }
     });
     panel.oncancel = (e) => { e.preventDefault(); closePanel(); };
     if (!panel.open) panel.showModal();
     showTab(current);
+  };
+
+  // ── 저장: Google 시트의 '사이트설정' 탭에 넣어 모든 방문자에게 반영합니다 ──
+  const SITE_CACHE_KEY = "ffp:siteConfig";
+  const publishConfig = async (cfg, btn) => {
+    if (isLocal) { alert(`체험 모드에서는 저장할 곳이 없습니다. 💾 설정 파일 탭에서 ${DEPLOY} 를 내려받아 사이트에 올려 주세요.`); return false; }
+    const config = clone(cfg);
+    delete config.participation; // 저장 방식은 항상 config.js 의 값을 씁니다
+    const old = btn?.textContent;
+    if (btn) { btn.disabled = true; btn.textContent = "저장 중…"; }
+    try {
+      const r = await db.saveSiteConfig(pw(), config);
+      try {
+        localStorage.setItem(SITE_CACHE_KEY, JSON.stringify({ config, savedAt: r.savedAt }));
+        localStorage.removeItem(OVERRIDE_KEY); // 저장했으니 이 브라우저의 미리보기는 필요 없습니다
+      } catch { /* 저장 공간 없음 */ }
+    } catch (err) {
+      if (btn?.isConnected) { btn.disabled = false; btn.textContent = old; }
+      alert(`저장하지 못했습니다: ${err.message}`);
+      return false;
+    }
+    session.set({ ...session.get(), tab: current, reopen: true });
+    toast("저장했습니다. 모든 방문자에게 반영됩니다.");
+    location.reload();
+    return true;
   };
 
   // 관리자로 들어와 있는 동안 '과제 및 평가' 섹션에 바로 고치기 버튼을 보여 줍니다.
@@ -4307,9 +4351,13 @@ window.SITE_CONFIG = {
   let editSection = "site";
   const tabEdit = (body) => {
     body.innerHTML = `
-      ${toolbar("사이트 편집", `<button class="btn btn-primary btn-sm" type="button" data-act="apply-top">미리보기 적용</button>`)}
-      <p class="ap-help">고친 내용은 <b>미리보기 적용</b>을 누르면 이 브라우저에서 바로 확인할 수 있습니다.
-        모든 방문자에게 반영하려면 <b>💾 설정 파일</b> 탭에서 ${DEPLOY} 를 내려받아 사이트의 ${DEPLOY} 와 바꿔 주세요.</p>
+      ${toolbar("사이트 편집", `
+        <button class="btn ${isLocal ? "btn-primary" : "btn-ghost"} btn-sm" type="button" data-act="apply-top">미리보기 적용</button>
+        ${isLocal ? "" : `<button class="btn btn-primary btn-sm" type="button" data-act="publish-top">💾 저장</button>`}`)}
+      <p class="ap-help">${isLocal
+        ? `고친 내용은 <b>미리보기 적용</b>을 누르면 이 브라우저에서 바로 확인할 수 있습니다.
+           모든 방문자에게 반영하려면 <b>💾 설정 파일</b> 탭에서 ${DEPLOY} 를 내려받아 사이트의 ${DEPLOY} 와 바꿔 주세요.`
+        : `<b>미리보기 적용</b>은 이 브라우저에서만 먼저 확인하는 것이고, <b>💾 저장</b>을 누르면 Google 시트에 저장되어 <b>모든 방문자에게 반영</b>됩니다.`}</p>
       <div class="ed-layout">
         <div class="ed-sections" role="list">
           ${SECTIONS.filter(([k]) => k in draft).map(([k, name]) => `<button type="button" role="listitem" data-sec="${k}" class="${k === editSection ? "active" : ""}">${name}</button>`).join("")}
@@ -4334,6 +4382,7 @@ window.SITE_CONFIG = {
     body.querySelector(".ed-sections").addEventListener("click", (e) => { const b = e.target.closest("[data-sec]"); if (b) pick(b.dataset.sec); });
     $(".ed-sections-select", body).addEventListener("change", (e) => pick(e.target.value));
     body.querySelector('[data-act="apply-top"]').addEventListener("click", applyDraft);
+    body.querySelector('[data-act="publish-top"]')?.addEventListener("click", (e) => publishConfig(draft, e.currentTarget));
 
     const onInput = (e) => {
       const t = e.target;
@@ -4525,6 +4574,9 @@ window.SITE_CONFIG = {
     };
     apply(draft);
     apply(C);
+    current = "tasks";
+    // 시트에 연결되어 있으면 바로 저장해 모든 학습자에게 반영합니다.
+    if (!isLocal) { publishConfig(dirty ? draft : clone(C)); return; }
     if (!saveOverride(dirty ? draft : clone(C))) { alert("브라우저 저장 공간에 저장하지 못했습니다."); return; }
     session.set({ ...session.get(), tab: "tasks", reopen: true });
     location.reload();
@@ -4561,7 +4613,9 @@ window.SITE_CONFIG = {
         </form>` : ""}
       ${toolbar(`주차별 과제 (${count}개)`, "")}
       <p class="ap-help">주차마다 <b>과제 만들기</b>를 누르면 강의 계획의 주차 카드와 학습자 공간의 과제 제출 목록에 함께 나타납니다.
-        저장하면 이 브라우저에 바로 적용됩니다. 모든 학습자에게 반영하려면 <b>💾 설정 파일</b> 탭에서 ${DEPLOY} 를 내려받아 사이트에 올려 주세요.</p>
+        ${isLocal
+          ? `저장하면 이 브라우저에 바로 적용됩니다. 모든 학습자에게 반영하려면 <b>💾 설정 파일</b> 탭에서 ${DEPLOY} 를 내려받아 사이트에 올려 주세요.`
+          : "저장하면 Google 시트에 저장되어 모든 학습자에게 바로 반영됩니다."}</p>
       <ul class="ap-notice-list task-list">
         ${cfgWeeks.map((w, i) => {
           const due = weeks[i]?.due;
@@ -4885,6 +4939,21 @@ window.SITE_CONFIG = ${JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c")};
         </ul>
         <button class="btn btn-primary" type="button" data-act="download">config.js 내려받기</button>`}
       </div>
+      ${isLocal ? "" : `
+      <div class="ap-card">
+        <h4>☁️ Google 시트에 저장된 사이트 설정</h4>
+        <p>${window.SITE_CONFIG_SAVED_AT
+          ? `지금 모든 방문자에게 보이는 설정은 <b>${esc(fmtTime(window.SITE_CONFIG_SAVED_AT))}</b> 에 저장한 내용입니다.`
+          : "아직 저장한 설정이 없어 사이트 파일(config.js)의 내용이 그대로 보이고 있습니다."}</p>
+        <ul class="ap-steps">
+          <li><b>💾 저장</b>을 누르면 편집 내용이 시트의 '사이트설정' 탭에 들어가고 모든 방문자에게 반영됩니다.</li>
+          <li><b>저장본 지우기</b>를 누르면 사이트 파일(config.js)의 내용으로 돌아갑니다.</li>
+        </ul>
+        <div class="ap-row-actions">
+          <button class="btn btn-primary" type="button" data-act="publish">💾 지금 편집 내용 저장</button>
+          ${window.SITE_CONFIG_SAVED_AT ? `<button class="btn btn-ghost danger" type="button" data-act="clear-saved">저장본 지우기</button>` : ""}
+        </div>
+      </div>`}
       <div class="ap-card">
         <h4>📂 불러오기</h4>
         <p>관리자 화면에서 저장한 ${bundleShell ? "index.html 또는 " : ""}config.js 파일을 불러와 편집 내용으로 가져옵니다.</p>
@@ -4896,6 +4965,20 @@ window.SITE_CONFIG = ${JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c")};
         <p>${overridden ? "지금 이 브라우저는 관리자 화면에서 고친 설정으로 보이고 있습니다." : "지금은 사이트의 원래 설정이 그대로 보이고 있습니다."}</p>
         ${overridden ? `<button class="btn btn-ghost" type="button" data-act="reset">원래 설정으로 되돌리기</button>` : ""}
       </div>`;
+    body.querySelector('[data-act="publish"]')?.addEventListener("click", (e) => publishConfig(draft, e.currentTarget));
+    body.querySelector('[data-act="clear-saved"]')?.addEventListener("click", async (e) => {
+      if (!confirm("시트에 저장한 사이트 설정을 지우고 사이트 파일(config.js)의 내용으로 되돌릴까요? 모든 방문자에게 적용됩니다.")) return;
+      e.currentTarget.disabled = true;
+      try {
+        const r = await db.clearSiteConfig(pw());
+        try {
+          localStorage.setItem(SITE_CACHE_KEY, JSON.stringify({ config: null, savedAt: r.savedAt }));
+          localStorage.removeItem(OVERRIDE_KEY);
+        } catch { /* 무시 */ }
+      } catch (err) { alert(`지우지 못했습니다: ${err.message}`); e.currentTarget.disabled = false; return; }
+      session.set({ ...session.get(), tab: "file", reopen: true });
+      location.reload();
+    });
     body.querySelector('[data-act="download"]').addEventListener("click", () => {
       download("config.js", configFileText(draft));
       toast("config.js 를 내려받았습니다.");
@@ -4962,6 +5045,8 @@ window.SITE_CONFIG = ${JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c")};
       session.set({ ...session.get(), pw: n1 });
       err.textContent = "";
       e.target.reset();
+      // 시트에 연결되어 있으면 새 비밀번호를 사이트 설정에도 저장해 다른 기기에서도 바로 쓰이게 합니다.
+      if (!isLocal && $("#pw-sheet")?.checked) { current = "password"; publishConfig(base); return; }
       toast(`비밀번호를 바꿨습니다. ${DEPLOY} 를 내려받아 사이트에 올려 주세요.`);
     });
   };
@@ -5141,6 +5226,65 @@ window.SITE_CONFIG = ${JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c")};
     session.set({ ...s, reopen: false });
     openPanel();
   }
+});
+
+// ════════════════════════════════════════════════════
+//  시작: Google 시트에 저장된 사이트 설정을 받아 config.js 위에 덮어쓴 뒤 화면을 그립니다.
+//  - 한 번 받은 설정은 이 브라우저에 보관해 다음 방문부터는 바로 그리고, 뒤에서 새 설정이 있는지 확인합니다.
+//  - 저장된 설정이 없거나 시트에 연결하지 않았으면 config.js 그대로 그립니다.
+// ════════════════════════════════════════════════════
+(function () {
+  "use strict";
+  const CACHE_KEY = "ffp:siteConfig";
+  const C = window.SITE_CONFIG;
+  const PC = (C && C.participation) || {};
+  const url = PC.mode === "sheets" ? String(PC.sheetsUrl || "").trim() : "";
+  let started = false;
+  const run = () => {
+    if (started) return;
+    started = true;
+    (window.SITE_BOOT || []).forEach((fn) => {
+      try { fn(); } catch (err) { console.error(err); }
+    });
+  };
+  // 저장된 설정은 맨 위 항목 단위로 덮어씁니다. 저장 방식(participation)은 항상 config.js 것을 씁니다.
+  const apply = (saved) => {
+    if (saved && saved.config && saved.config.site) {
+      window.SITE_CONFIG = { ...C, ...saved.config, participation: C.participation };
+      window.SITE_CONFIG_SAVED_AT = saved.savedAt || 0;
+    }
+  };
+  const readCache = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch { return null; } };
+  const writeCache = (v) => { try { localStorage.setItem(CACHE_KEY, JSON.stringify(v)); } catch { /* 저장 공간 없음 */ } };
+  const fetchSaved = () => fetch(`${url}?action=siteConfig`)
+    .then((r) => r.json())
+    .then((j) => { if (!j.ok) throw new Error(j.error || "설정을 받지 못했습니다."); return { config: j.config || null, savedAt: j.savedAt || 0 }; });
+
+  if (!url || !C) { run(); return; }
+
+  const cache = readCache();
+  if (cache) {
+    apply(cache);
+    run();
+    fetchSaved().then((fresh) => {
+      if ((fresh.savedAt || 0) === (cache.savedAt || 0)) return;
+      writeCache(fresh);
+      // 화면을 쓰는 중일 수 있으니 바로 새로 고치지 않고 알려 줍니다.
+      const bar = document.createElement("div");
+      bar.className = "update-bar";
+      bar.innerHTML = `<span>사이트 내용이 새로 바뀌었습니다.</span><button type="button">새로고침</button>`;
+      bar.querySelector("button").addEventListener("click", () => location.reload());
+      document.body.appendChild(bar);
+    }).catch(() => { /* 연결이 안 되면 보관한 설정 그대로 씁니다 */ });
+    return;
+  }
+
+  // 처음 방문: 저장된 설정을 최대 5초 기다립니다.
+  const timer = setTimeout(run, 5000);
+  fetchSaved().then((fresh) => {
+    writeCache(fresh);
+    if (!started) { clearTimeout(timer); apply(fresh); run(); }
+  }).catch(() => { clearTimeout(timer); run(); });
 })();
 </script>
 </body>
