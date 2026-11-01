@@ -73,6 +73,15 @@
           </div>`).join("")}
       </div>
 
+      ${A.objectives && A.objectives.length ? `
+        <div class="objectives">
+          <h3>${esc(A.objectivesHeading || "학습목표")}</h3>
+          ${A.objectivesLead ? `<p class="objectives-lead">${esc(A.objectivesLead)}</p>` : ""}
+          <ol class="card objectives-list">
+            ${A.objectives.map((o) => `<li>${esc(o)}</li>`).join("")}
+          </ol>
+        </div>` : ""}
+
       <div class="slider" aria-roledescription="carousel" aria-label="${esc(A.benefitsHeading)}">
         <div class="slider-head">
           <h3>${esc(A.benefitsHeading)}</h3>
@@ -503,14 +512,16 @@
     <div class="container">
       <div class="footer-card">
         <div class="photo-wrap">
-          ${P.photo ? `<img class="photo" src="${esc(P.photo)}" alt="${esc(P.name)} ${esc(P.title)} 사진">` : ""}
+          ${P.photo ? `<img class="photo" src="${esc(P.photo)}" alt="${esc(P.photoAlt || `${P.name} ${P.title} 사진`)}">` : ""}
           <div class="photo photo-fallback" aria-hidden="true"${P.photo ? " hidden" : ""}>${esc(P.name.charAt(0))}</div>
         </div>
         <div class="footer-body">
           <p class="footer-kicker">${esc(P.heading)}</p>
           <h2>${esc(P.name)} <span>${esc(P.title)}</span></h2>
           <p class="affiliation">${esc(P.affiliation)}</p>
-          <p class="bio">${esc(P.bio)}</p>
+          ${P.nameEn || P.affiliationEn?.length ? `
+            <p class="name-en">${P.nameEn ? `<strong>${esc(P.nameEn)}</strong>` : ""}${(P.affiliationEn || []).map((l) => `<span>${esc(l)}</span>`).join("")}</p>` : ""}
+          ${P.bio ? `<p class="bio">${esc(P.bio)}</p>` : ""}
           ${P.career?.length ? `<ul class="career">${P.career.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
         </div>
         <ul class="contacts">

@@ -17,7 +17,7 @@ $config = Read-Text "config.js"
 $jsFiles = @("app.js", "participate.js", "admin.js")
 
 # Embed the instructor photo as a data URI so the single file needs no images folder.
-$photoMime = @{ ".jpg" = "image/jpeg"; ".jpeg" = "image/jpeg"; ".png" = "image/png"; ".webp" = "image/webp" }
+$photoMime = @{ ".jpg" = "image/jpeg"; ".jpeg" = "image/jpeg"; ".png" = "image/png"; ".webp" = "image/webp"; ".svg" = "image/svg+xml" }
 $photoPath = [regex]::Match($config, 'photo:\s*"([^"]+)"').Groups[1].Value
 if ($photoPath -and -not $photoPath.StartsWith("data:")) {
   $full = Join-Path $root $photoPath

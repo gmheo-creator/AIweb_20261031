@@ -36,6 +36,37 @@
   <main id="main">
     <section class="hero">
       <div class="container hero-inner">
+        <!-- 제목 그림: 강단에서 AI 화면을 가리키며 강의하는 예비교수자 -->
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 360 300" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <g stroke-width="2" opacity=".55">
+              <path d="M22 14v14M15 21h14"/>
+              <path d="M226 12v12M220 18h12"/>
+              <path d="M344 112v12M338 118h12"/>
+            </g>
+            <rect x="20" y="40" width="220" height="140" rx="6" fill="currentColor" fill-opacity=".12"/>
+            <g stroke-width="2" opacity=".7">
+              <path d="M70 85 130 70M70 85 130 110M70 85 130 150M70 135 130 70M70 135 130 110M70 135 130 150"/>
+              <path d="M130 70 190 95M130 110 190 95M130 150 190 95M130 70 190 135M130 110 190 135M130 150 190 135"/>
+            </g>
+            <g fill="currentColor">
+              <circle cx="70" cy="85" r="7"/><circle cx="70" cy="135" r="7"/>
+              <circle cx="130" cy="70" r="7"/><circle cx="130" cy="110" r="7"/><circle cx="130" cy="150" r="7"/>
+              <circle cx="190" cy="95" r="7"/><circle cx="190" cy="135" r="7"/>
+            </g>
+            <path d="M130 180v35M105 238l25-23 25 23"/>
+            <circle cx="275" cy="150" r="18" fill="currentColor" fill-opacity=".25"/>
+            <path d="M245 232q0-52 30-54 30 2 30 54" fill="currentColor" fill-opacity=".18"/>
+            <path d="M255 192 230 162"/>
+            <path d="M230 162 206 136" stroke-width="2"/>
+            <path d="M240 217h70l-8 75h-54z" fill="currentColor" fill-opacity=".22"/>
+            <rect x="232" y="207" width="86" height="10" rx="2" fill="currentColor"/>
+            <path d="M300 40l40 15-40 15-40-15z" fill="currentColor"/>
+            <path d="M276 63v15q24 10 48 0V63"/>
+            <path d="M340 55v24" stroke-width="2"/><circle cx="340" cy="82" r="3" fill="currentColor"/>
+            <path d="M0 292h360" stroke-width="2" opacity=".4"/>
+          </svg>
+        </div>
         <p class="eyebrow" data-bind="site.badge"></p>
         <h1 data-bind="site.title"></h1>
         <p class="hero-subtitle" data-bind="site.subtitle"></p>
@@ -49,13 +80,13 @@
 
     <section class="section" id="about"></section>
     <section class="section section-tint" id="curriculum"></section>
+    <section class="section" id="enroll"></section>
+    <section class="section section-tint" id="tools"></section>
     <section class="section" id="schedule"></section>
-    <section class="section section-tint" id="poll"></section>
-    <section class="section" id="tools"></section>
-    <section class="section section-tint" id="enroll"></section>
-    <section class="section section-tint section-flush" id="apply"></section>
-    <section class="section" id="student"></section>
-    <section class="section section-tint" id="faq"></section>
+    <section class="section section-tint" id="apply"></section>
+    <section class="section" id="poll"></section>
+    <section class="section section-tint" id="student"></section>
+    <section class="section" id="faq"></section>
   </main>
 
   <footer class="site-footer" id="instructor"></footer>
@@ -63,6 +94,7 @@
   <button class="to-top" type="button" aria-label="맨 위로 이동">↑</button>
 
   <dialog class="popup" id="welcome-popup" aria-labelledby="popup-title"></dialog>
+  <dialog class="popup notice-popup" id="notice-popup" aria-labelledby="notice-popup-title"></dialog>
   <dialog class="admin-login" id="admin-login" aria-labelledby="admin-login-title"></dialog>
   <dialog class="admin-panel" id="admin-panel" aria-labelledby="admin-title"></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

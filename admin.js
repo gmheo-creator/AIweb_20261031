@@ -2,6 +2,7 @@
  * 공지사항 표시 + 관리자 화면
  * - 자물쇠 버튼 → 비밀번호 확인(PBKDF2 해시 비교) → 관리자 화면
  * - 사이트 편집 · 공지 · 수강생 명단 · 출석/과제/신청 내역(CSV 내려받기) · 설정 파일 저장/불러오기 · 비밀번호 변경
+ * - AI API 키 (Claude · BAZE, 이 브라우저에만 저장)
  * 내용 수정은 config.js 에서 하세요. 이 파일은 고칠 필요가 없습니다.
  */
 (function () {
@@ -47,13 +48,21 @@
     [...(C.notices || []), ...serverNotices].forEach((n) => { if (n && n.id) map.set(n.id, n); });
     return [...map.values()].sort((a, b) => (b.pinned - a.pinned) || String(b.date).localeCompare(String(a.date)));
   };
+  // 대문 공지는 한 페이지에 3개씩 보여 주고, 나머지는 아래 페이지 번호로 넘겨 봅니다.
+  const NOTICES_PER_PAGE = 3;
+  let noticePage = 1;
   const renderNotices = () => {
     const box = $("#notice");
-    const list = allNotices();
-    if (!list.length) { box.hidden = true; box.innerHTML = ""; return; }
+    const all = allNotices();
+    if (!all.length) { box.hidden = true; box.innerHTML = ""; return; }
     box.hidden = false;
-    const item = (n, i) => `
-      <li class="${n.pinned ? "pinned" : ""}"${i >= 3 ? " hidden" : ""}>
+    const pages = Math.ceil(all.length / NOTICES_PER_PAGE);
+    noticePage = Math.min(Math.max(1, noticePage), pages);
+    const list = all.slice((noticePage - 1) * NOTICES_PER_PAGE, noticePage * NOTICES_PER_PAGE);
+    const pageBtn = (p, label, aria, disabled) =>
+      `<button type="button" data-page="${p}" aria-label="${aria}"${disabled ? " disabled" : ""}${p === noticePage && !label ? ` aria-current="page"` : ""}>${label || p}</button>`;
+    const item = (n) => `
+      <li class="${n.pinned ? "pinned" : ""}">
         <details>
           <summary>
             <span class="notice-tag">${n.pinned ? "📌 고정" : "공지"}</span>
@@ -67,20 +76,76 @@
       <div class="card notice-card">
         <div class="notice-head">
           <h2>📢 공지사항</h2>
-          <span>${list.length}건</span>
+          <span>${all.length}건</span>
         </div>
         <ul class="notice-list">${list.map(item).join("")}</ul>
-        ${list.length > 3 ? `<button class="link-btn notice-more" type="button">공지 ${list.length - 3}건 더 보기</button>` : ""}
+        ${pages > 1 ? `
+        <nav class="notice-pager" aria-label="공지사항 페이지">
+          ${pageBtn(noticePage - 1, "‹", "이전 페이지", noticePage === 1)}
+          ${Array.from({ length: pages }, (_, i) => pageBtn(i + 1, "", `${i + 1}페이지`, false)).join("")}
+          ${pageBtn(noticePage + 1, "›", "다음 페이지", noticePage === pages)}
+        </nav>` : ""}
       </div>`;
     const first = box.querySelector(".notice-list details");
-    if (first && list[0].pinned) first.open = true;
-    box.querySelector(".notice-more")?.addEventListener("click", (e) => {
-      box.querySelectorAll(".notice-list li[hidden]").forEach((li) => { li.hidden = false; });
-      e.currentTarget.remove();
+    if (first && noticePage === 1 && list[0].pinned) first.open = true;
+    box.querySelector(".notice-pager")?.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-page]");
+      if (!b || b.disabled) return;
+      noticePage = Number(b.dataset.page);
+      renderNotices();
+      box.querySelector(`.notice-pager [aria-current="page"]`)?.focus();
     });
   };
+  // '팝업으로 띄우기'를 고른 공지는 방문할 때 창으로 보여 줍니다.
+  // '오늘 하루 보지 않기'는 공지마다 기억하므로, 새 팝업 공지는 다시 뜹니다.
+  const NOTICE_HIDE_KEY = "noticePopup:hidden";
+  let noticePopupShown = false;
+  const showNoticePopup = () => {
+    const dlg = $("#notice-popup");
+    if (noticePopupShown || !dlg || typeof dlg.showModal !== "function" || $("#admin-panel")?.open) return;
+    const now = today();
+    const hidden = store.get(NOTICE_HIDE_KEY, {});
+    const list = allNotices().filter((n) => n.popup && hidden[n.id] !== now);
+    if (!list.length) return;
+    noticePopupShown = true;
+    dlg.innerHTML = `
+      <div class="popup-body">
+        <button class="popup-x" type="button" data-close aria-label="닫기">×</button>
+        <div class="popup-art" aria-hidden="true">📢</div>
+        <h2 id="notice-popup-title">${list.length > 1 ? `공지사항 ${list.length}건` : esc(list[0].title)}</h2>
+        ${list.map((n) => `
+          <article class="notice-popup-item">
+            ${list.length > 1 ? `<h3>${esc(n.title)}</h3>` : ""}
+            <time>${esc(n.date)}</time>
+            <p>${esc(n.body)}</p>
+          </article>`).join("")}
+      </div>
+      <div class="popup-foot">
+        <button type="button" data-hide-today>오늘 하루 보지 않기</button>
+        <button type="button" data-close>닫기</button>
+      </div>`;
+    dlg.addEventListener("click", (e) => {
+      if (e.target === dlg || e.target.closest("[data-close]")) dlg.close();
+      if (e.target.closest("[data-hide-today]")) {
+        // 오늘 날짜가 아닌 기록은 정리하고, 지금 보인 공지들을 오늘 하루 숨깁니다.
+        const keep = Object.fromEntries(Object.entries(hidden).filter(([, d]) => d === now));
+        list.forEach((n) => { keep[n.id] = now; });
+        store.set(NOTICE_HIDE_KEY, keep);
+        dlg.close();
+        toast("오늘 하루 동안 이 공지 창을 띄우지 않습니다.");
+      }
+    });
+    // 수강 안내 팝업이 떠 있으면 그 창을 닫은 뒤에 띄웁니다.
+    const welcome = $("#welcome-popup");
+    const open = () => { if (!dlg.open) dlg.showModal(); };
+    if (welcome?.open) welcome.addEventListener("close", open, { once: true });
+    else open();
+  };
+
   renderNotices();
-  if (!isLocal) db.notices().then((n) => { serverNotices = n; renderNotices(); }).catch(() => { /* 공지 서버 오류는 조용히 넘깁니다 */ });
+  if (isLocal) setTimeout(showNoticePopup, 800);
+  else db.notices().then((n) => { serverNotices = n; renderNotices(); }).catch(() => { /* 공지 서버 오류는 조용히 넘깁니다 */ })
+    .finally(() => setTimeout(showNoticePopup, 800));
 
   // 관리자 미리보기가 적용된 상태면 화면 아래에 알려 줍니다.
   if (window.SITE_CONFIG_ORIGINAL) {
@@ -192,6 +257,7 @@
     ["applications", "📋 수강 신청"],
     ["file", "💾 설정 파일"],
     ["password", "🔑 비밀번호"],
+    ["ai", "🤖 AI API 키"],
   ];
   let draft = clone(C);
   let dirty = false;
@@ -272,7 +338,7 @@
     const old = $("#ap-body");
     const body = old.cloneNode(false);
     old.replaceWith(body);
-    ({ edit: tabEdit, notices: tabNotices, roster: tabRoster, attendance: tabAttendance, submissions: tabSubmissions, applications: tabApplications, file: tabFile, password: tabPassword })[id](body);
+    ({ edit: tabEdit, notices: tabNotices, roster: tabRoster, attendance: tabAttendance, submissions: tabSubmissions, applications: tabApplications, file: tabFile, password: tabPassword, ai: tabAI })[id](body);
   };
 
   // ── 공통: CSV 내려받기 ─────────────────────────────
@@ -374,13 +440,14 @@
     description: "설명", ctaPrimary: "첫 번째 버튼", ctaSecondary: "두 번째 버튼", label: "이름", href: "링크",
     icon: "아이콘(이모지)", value: "값", note: "보조 문구", id: "ID (연결용, 바꾸지 마세요)", heading: "섹션 제목",
     lead: "안내 문구", stats: "숫자 카드", suffix: "단위", benefitsHeading: "장점 제목", benefits: "장점 슬라이드",
+    objectivesHeading: "학습목표 제목", objectivesLead: "학습목표 안내", objectives: "학습목표",
     text: "내용", modules: "단계 카드", phase: "단계", weeks: "주차", topics: "학습 내용", weeksHeading: "주차별 제목",
     weeksLead: "주차별 안내", videos: "참고 영상", url: "주소", assignment: "과제", due: "마감 (YYYY-MM-DD HH:MM)",
     submitUrl: "과제 제출 주소", startDate: "1주차 날짜 (YYYY-MM-DD)", weekday: "수업 요일 (0=일 … 2=화 … 6=토)",
     startTime: "시작 시각", endTime: "종료 시각", location: "장소", skipDates: "휴강일 (YYYY-MM-DD)",
     items: "항목", name: "이름", category: "분류", prepHeading: "준비물 제목", prep: "준비물", stepsHeading: "절차 제목",
-    steps: "신청 절차", applyButton: "신청 버튼", q: "질문", a: "답변", photo: "사진 파일 경로", role: "역할",
-    affiliation: "소속", bio: "소개", career: "경력", contacts: "연락처", address: "주소", copyright: "저작권 문구",
+    steps: "신청 절차", applyButton: "신청 버튼", q: "질문", a: "답변", photo: "사진 파일 경로", photoAlt: "사진 설명 (화면 낭독용)", role: "역할",
+    affiliation: "소속", nameEn: "영문 이름", affiliationEn: "영문 직함·소속 (한 줄씩)", bio: "소개", career: "경력", contacts: "연락처", address: "주소", copyright: "저작권 문구",
     enabled: "사용", delaySeconds: "뜨기까지 (초)", points: "요점", button: "버튼", fireworks: "폭죽 효과",
     message: "환영 메시지", mode: "저장 방식 (local 또는 sheets)", sheetsUrl: "Google 시트 웹 앱 주소",
     pollRefreshSeconds: "투표 새로고침 간격 (초)", allowChange: "투표 바꾸기 허용", options: "선택지", fields: "입력 항목",
@@ -397,7 +464,7 @@
     videos: { title: "", url: "" },
     contacts: { icon: "", label: "", value: "", href: "" },
     stats: { value: 0, suffix: "", label: "" },
-    skipDates: "", topics: "", career: "", points: "", accept: "",
+    skipDates: "", topics: "", career: "", affiliationEn: "", points: "", accept: "",
   };
   // 있어도 되고 없어도 되는 항목 (부모 배열 이름 → 항목 → 기본값)
   const OPTIONAL = {
@@ -592,70 +659,93 @@
     saveOverride(clone(C));
     renderNotices();
   };
+  // 새 공지는 체험 모드면 이 브라우저(config)에, 시트 연결 시엔 시트에 저장합니다.
+  // 이미 있는 공지는 원래 있던 곳에 덮어씁니다.
+  const saveNotice = async (notice) => {
+    const local = C.notices || [];
+    if (local.some((n) => n.id === notice.id)) persistNotices(local.map((n) => (n.id === notice.id ? notice : n)));
+    else if (isLocal) persistNotices([...local, notice]);
+    else { serverNotices = (await db.saveNotice(pw(), notice)).notices || serverNotices; renderNotices(); }
+  };
+  let noticeEditId = null; // 수정 중인 공지 id (없으면 새 공지)
   const tabNotices = (body) => {
     const list = allNotices();
+    const editing = list.find((n) => n.id === noticeEditId) || null;
+    if (!editing) noticeEditId = null;
+    const v = editing || { title: "", body: "", date: today(), pinned: false, popup: false };
     body.innerHTML = `
-      ${toolbar("공지 올리기", "")}
-      <form class="ap-card notice-form" novalidate>
-        <div class="field"><label for="nt-title">제목</label><input id="nt-title" maxlength="80"></div>
-        <div class="field"><label for="nt-body">내용</label><textarea id="nt-body" rows="4"></textarea></div>
+      ${toolbar(editing ? "공지 수정" : "공지 올리기", "")}
+      <form class="ap-card notice-form${editing ? " is-editing" : ""}" novalidate>
+        <div class="field"><label for="nt-title">제목</label><input id="nt-title" maxlength="80" value="${esc(v.title)}"></div>
+        <div class="field"><label for="nt-body">내용</label><textarea id="nt-body" rows="4">${esc(v.body)}</textarea></div>
         <div class="notice-form-row">
-          <div class="field"><label for="nt-date">날짜</label><input id="nt-date" type="date" value="${today()}"></div>
-          <label class="ed-check"><input type="checkbox" id="nt-pin"> 맨 위에 고정</label>
-          <button class="btn btn-primary" type="submit">공지 올리기</button>
+          <div class="field"><label for="nt-date">날짜</label><input id="nt-date" type="date" value="${esc(v.date)}"></div>
+          <label class="ed-check"><input type="checkbox" id="nt-pin"${v.pinned ? " checked" : ""}> 맨 위에 고정</label>
+          <label class="ed-check"><input type="checkbox" id="nt-popup"${v.popup ? " checked" : ""}> 팝업으로 띄우기</label>
+          ${editing ? `<button class="btn btn-ghost" type="button" data-cancel>취소</button>` : ""}
+          <button class="btn btn-primary" type="submit">${editing ? "수정 저장" : "공지 올리기"}</button>
         </div>
         <p class="field-error" id="nt-err" role="alert"></p>
-        <p class="ap-help">${isLocal
+        <p class="ap-help">'팝업으로 띄우기'를 고르면 방문자가 사이트에 들어올 때 이 공지가 창으로 뜹니다. (방문자는 '오늘 하루 보지 않기'로 닫을 수 있습니다)<br>${isLocal
           ? `체험 모드에서는 이 브라우저에만 보입니다. 모든 방문자에게 보이게 하려면 💾 설정 파일 탭에서 ${DEPLOY} 를 내려받아 교체해 주세요.`
           : "Google 시트의 '공지' 탭에 저장되어 모든 방문자에게 바로 보입니다."}</p>
       </form>
       ${toolbar(`게시된 공지 (${list.length})`, "")}
       <ul class="ap-notice-list">
         ${list.length ? list.map((n) => `
-          <li>
-            <div><span class="notice-tag">${n.pinned ? "📌 고정" : "공지"}</span> <strong>${esc(n.title)}</strong> <time>${esc(n.date)}</time>
+          <li${n.id === noticeEditId ? ` class="is-editing"` : ""}>
+            <div>
+              ${n.pinned ? `<span class="notice-tag is-pin">📌 고정</span>` : `<span class="notice-tag">공지</span>`}
+              ${n.popup ? `<span class="notice-tag is-popup">🪟 팝업</span>` : ""}
+              <strong>${esc(n.title)}</strong> <time>${esc(n.date)}</time>
               <p>${esc(n.body)}</p></div>
             <div class="ap-row-actions">
-              <button class="btn btn-ghost btn-sm" type="button" data-pin="${esc(n.id)}">${n.pinned ? "고정 해제" : "고정"}</button>
-              <button class="btn btn-ghost btn-sm danger" type="button" data-del="${esc(n.id)}">삭제</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-act="edit" data-id="${esc(n.id)}">수정</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-act="pin" data-id="${esc(n.id)}">${n.pinned ? "고정 해제" : "고정"}</button>
+              <button class="btn btn-ghost btn-sm" type="button" data-act="popup" data-id="${esc(n.id)}">${n.popup ? "팝업 끄기" : "팝업 켜기"}</button>
+              <button class="btn btn-ghost btn-sm danger" type="button" data-act="del" data-id="${esc(n.id)}">삭제</button>
             </div>
           </li>`).join("") : `<li class="empty">게시된 공지가 없습니다.</li>`}
       </ul>`;
 
-    body.querySelector(".notice-form").addEventListener("submit", async (e) => {
+    const form = body.querySelector(".notice-form");
+    form.querySelector("[data-cancel]")?.addEventListener("click", () => { noticeEditId = null; showTab("notices"); });
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const title = $("#nt-title").value.trim();
       const text = $("#nt-body").value.trim();
       if (!title || !text) { $("#nt-err").textContent = !title ? "제목을 입력해 주세요." : "내용을 입력해 주세요."; return; }
-      const notice = { id: `n-${Date.now()}`, date: $("#nt-date").value || today(), title, body: text, pinned: $("#nt-pin").checked };
-      if (isLocal) {
-        persistNotices([...(C.notices || []), notice]);
-      } else {
-        // 시트 연결 시: 공지는 시트에 저장되어 모든 방문자에게 바로 보입니다.
-        try { serverNotices = (await db.saveNotice(pw(), notice)).notices || serverNotices; }
-        catch (err) { $("#nt-err").textContent = `시트에 저장하지 못했습니다: ${err.message}`; return; }
-        renderNotices();
-      }
-      toast("공지를 올렸습니다.");
+      const notice = {
+        ...(editing || { id: `n-${Date.now()}` }),
+        date: $("#nt-date").value || today(), title, body: text,
+        pinned: $("#nt-pin").checked, popup: $("#nt-popup").checked,
+      };
+      try { await saveNotice(notice); }
+      catch (err) { $("#nt-err").textContent = `시트에 저장하지 못했습니다: ${err.message}`; return; }
+      toast(editing ? "공지를 수정했습니다." : "공지를 올렸습니다.");
+      noticeEditId = null;
       showTab("notices");
     });
+    if (editing) { form.scrollIntoView({ block: "nearest" }); $("#nt-title").focus(); }
+
     body.querySelector(".ap-notice-list").addEventListener("click", async (e) => {
-      const pinId = e.target.closest("[data-pin]")?.dataset.pin;
-      const delId = e.target.closest("[data-del]")?.dataset.del;
-      if (!pinId && !delId) return;
-      const id = pinId || delId;
-      if (delId && !confirm("이 공지를 삭제할까요?")) return;
-      const onServer = serverNotices.find((n) => n.id === id);
+      const btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      const { act, id } = btn.dataset;
+      const n = list.find((x) => x.id === id);
+      if (!n) return;
+      if (act === "edit") { noticeEditId = id; showTab("notices"); return; }
       try {
-        if (onServer && !isLocal) {
-          serverNotices = delId
-            ? (await db.deleteNotice(pw(), id)).notices
-            : (await db.saveNotice(pw(), { ...onServer, pinned: !onServer.pinned })).notices;
+        if (act === "del") {
+          if (!confirm("이 공지를 삭제할까요?")) return;
+          if (!isLocal && serverNotices.some((x) => x.id === id)) serverNotices = (await db.deleteNotice(pw(), id)).notices;
+          persistNotices((C.notices || []).filter((x) => x.id !== id));
+          if (noticeEditId === id) noticeEditId = null;
+        } else {
+          await saveNotice({ ...n, [act === "pin" ? "pinned" : "popup"]: !n[act === "pin" ? "pinned" : "popup"] });
         }
       } catch (err) { alert(`시트에 반영하지 못했습니다: ${err.message}`); return; }
-      const local = (C.notices || []).filter((n) => !(delId && n.id === delId)).map((n) => (n.id === pinId ? { ...n, pinned: !n.pinned } : n));
-      persistNotices(local);
-      toast(delId ? "공지를 삭제했습니다." : "고정 상태를 바꿨습니다.");
+      toast(act === "del" ? "공지를 삭제했습니다." : act === "pin" ? "고정 상태를 바꿨습니다." : "팝업 설정을 바꿨습니다.");
       showTab("notices");
     });
   };
@@ -1002,6 +1092,173 @@ window.SITE_CONFIG = ${JSON.stringify(cfg, null, 2).replace(/</g, "\\u003c")};
       err.textContent = "";
       e.target.reset();
       toast(`비밀번호를 바꿨습니다. ${DEPLOY} 를 내려받아 사이트에 올려 주세요.`);
+    });
+  };
+
+  // ════════════════════════════════════════════════════
+  //  탭 9. AI API 키 (Claude · BAZE)
+  //  - 키는 이 브라우저(localStorage)에만 저장되고 config.js·배포 파일에는 들어가지 않습니다.
+  //  - 두 키 모두 Anthropic Messages API 형식으로 부릅니다.
+  //    BAZE(고려대학교 API Gateway): https://docs.factchat.kr/docs/korea-seoul/api-gateway/getting-started/overview
+  // ════════════════════════════════════════════════════
+  const AI_KEY = "aiKeys";
+  const AI_PROVIDERS = {
+    claude: {
+      name: "Claude API",
+      url: "https://api.anthropic.com/v1/messages",
+      headers: { "anthropic-dangerous-direct-browser-access": "true" },
+      model: "claude-sonnet-5-5",
+      keyHint: "sk-ant-…",
+      help: `<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic Console</a>에서 발급합니다.`,
+    },
+    baze: {
+      name: "BAZE API (고려대학교 API Gateway)",
+      url: "https://api.baze.co/v1/gateway/claude/v1/messages/",
+      headers: {},
+      model: "claude-sonnet-5-5",
+      keyHint: "BAZE API 키",
+      help: `베이즈 웹사이트 → 좌측 하단 <b>API Gateway</b> → <b>API 키 생성</b>에서 발급합니다.
+        (<a href="https://docs.factchat.kr/docs/korea-seoul/api-gateway/getting-started/overview#api-gateway" target="_blank" rel="noopener">개발자 문서</a>)`,
+    },
+  };
+  const aiSettings = () => ({ primary: "claude", fallback: true, claude: { key: "", model: "" }, baze: { key: "", model: "" }, ...store.get(AI_KEY, {}) });
+
+  const callProvider = async (id, s, prompt, system) => {
+    const P = AI_PROVIDERS[id];
+    const res = await fetch(P.url, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": s[id].key, "anthropic-version": "2023-06-01", ...P.headers },
+      body: JSON.stringify({
+        model: s[id].model || P.model,
+        max_tokens: 1024,
+        ...(system ? { system } : {}),
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error?.message || data.detail?.message || (typeof data.detail === "string" && data.detail) || data.message || `HTTP ${res.status}`);
+    return (data.content || []).filter((c) => c.type === "text").map((c) => c.text).join("\n");
+  };
+
+  // 기본 키로 먼저 부르고, 실패하면(또는 키가 없으면) 다른 키로 다시 부릅니다.
+  const askAI = async (prompt, { system } = {}) => {
+    const s = aiSettings();
+    const order = [s.primary, s.primary === "claude" ? "baze" : "claude"].filter((id, i) => s[id]?.key && (i === 0 || s.fallback || !s[s.primary]?.key));
+    if (!order.length) throw new Error("저장된 API 키가 없습니다. 관리자 화면 → 🤖 AI API 키에서 입력해 주세요.");
+    const errors = [];
+    for (const id of order) {
+      try { return { text: await callProvider(id, s, prompt, system), provider: id }; }
+      catch (x) { errors.push(`${AI_PROVIDERS[id].name}: ${x.message}`); }
+    }
+    throw new Error(errors.join(" / "));
+  };
+  window.SITE_AI = { ask: askAI, providers: AI_PROVIDERS, settings: aiSettings };
+
+  const tabAI = (body) => {
+    const s = aiSettings();
+    const keyCard = (id) => {
+      const P = AI_PROVIDERS[id];
+      return `
+        <form class="ap-card ai-form" data-provider="${id}" novalidate>
+          <h4>${esc(P.name)} <span class="ai-state ${s[id].key ? "on" : ""}">${s[id].key ? "저장됨" : "없음"}</span></h4>
+          <div class="field"><label for="ai-${id}-key">API 키</label>
+            <input id="ai-${id}-key" type="password" autocomplete="off" spellcheck="false" placeholder="${s[id].key ? "저장된 키가 있습니다 (바꾸려면 새로 입력)" : esc(P.keyHint)}"></div>
+          <div class="field"><label for="ai-${id}-model">모델 (비워 두면 ${esc(P.model)})</label>
+            <input id="ai-${id}-model" type="text" spellcheck="false" value="${esc(s[id].model)}" placeholder="${esc(P.model)}"></div>
+          <p class="ap-help">${P.help}</p>
+          <p class="field-error" role="alert"></p>
+          <div class="ai-actions">
+            <button class="btn btn-primary btn-sm" type="submit">저장</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-act="test">연결 테스트</button>
+            <button class="btn btn-ghost btn-sm" type="button" data-act="remove">키 삭제</button>
+          </div>
+        </form>`;
+    };
+    body.innerHTML = `
+      ${toolbar("AI API 키", "")}
+      <p class="ap-help">Claude API 키와 BAZE API 키를 함께 쓸 수 있습니다. 키는 <b>이 브라우저에만</b> 저장되며 ${DEPLOY}·설정 파일에는 들어가지 않습니다.
+        다른 기기나 브라우저에서는 다시 입력해 주세요.</p>
+      <div class="ai-grid">${keyCard("claude")}${keyCard("baze")}</div>
+      <form class="ap-card ai-pref" novalidate>
+        <h4>키 사용 순서</h4>
+        <div class="field"><label for="ai-primary">먼저 쓸 키</label>
+          <select id="ai-primary">
+            <option value="claude" ${s.primary === "claude" ? "selected" : ""}>Claude API</option>
+            <option value="baze" ${s.primary === "baze" ? "selected" : ""}>BAZE API</option>
+          </select></div>
+        <label class="ed-check"><input type="checkbox" id="ai-fallback" ${s.fallback ? "checked" : ""}> 먼저 쓴 키가 실패하면 다른 키로 다시 시도</label>
+      </form>
+      <form class="ap-card ai-try" novalidate>
+        <h4>AI에게 물어보기 (시험)</h4>
+        <div class="field"><label for="ai-prompt">질문</label>
+          <textarea id="ai-prompt" rows="3">예비 교수자에게 성찰노트 작성 팁 3가지를 짧게 알려 줘.</textarea></div>
+        <button class="btn btn-primary btn-sm" type="submit">보내기</button>
+        <p class="field-error" role="alert"></p>
+        <div class="ai-answer" hidden></div>
+      </form>`;
+
+    const save = (patch) => { store.set(AI_KEY, { ...aiSettings(), ...patch }); };
+
+    body.querySelectorAll(".ai-form").forEach((form) => {
+      const id = form.dataset.provider;
+      const err = form.querySelector(".field-error");
+      const keyIn = form.querySelector(`#ai-${id}-key`);
+      const modelIn = form.querySelector(`#ai-${id}-model`);
+      const current = () => ({ key: keyIn.value.trim() || aiSettings()[id].key, model: modelIn.value.trim() });
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const v = current();
+        if (!v.key) { err.textContent = "API 키를 입력해 주세요."; keyIn.focus(); return; }
+        save({ [id]: v });
+        toast(`${AI_PROVIDERS[id].name} 키를 저장했습니다.`);
+        tabAI(body);
+      });
+      form.addEventListener("click", async (e) => {
+        const act = e.target.closest("[data-act]")?.dataset.act;
+        if (act === "remove") {
+          if (!confirm(`${AI_PROVIDERS[id].name} 키를 이 브라우저에서 지울까요?`)) return;
+          save({ [id]: { key: "", model: modelIn.value.trim() } });
+          toast("키를 지웠습니다.");
+          tabAI(body);
+        }
+        if (act === "test") {
+          const v = current();
+          if (!v.key) { err.textContent = "API 키를 입력해 주세요."; keyIn.focus(); return; }
+          err.textContent = "확인하는 중…";
+          e.target.disabled = true;
+          try {
+            await callProvider(id, { [id]: v }, "연결 확인입니다. '확인'이라고만 답해 주세요.");
+            err.textContent = "";
+            toast(`${AI_PROVIDERS[id].name} 연결에 성공했습니다.`);
+          } catch (x) {
+            err.textContent = `연결하지 못했습니다: ${x.message === "Failed to fetch" ? "서버에 닿지 못했습니다 (인터넷 연결 또는 브라우저 접근 제한)" : x.message}`;
+          } finally { e.target.disabled = false; }
+        }
+      });
+    });
+
+    body.querySelector(".ai-pref").addEventListener("change", () => {
+      save({ primary: $("#ai-primary").value, fallback: $("#ai-fallback").checked });
+      toast("키 사용 순서를 저장했습니다.");
+    });
+
+    body.querySelector(".ai-try").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const err = e.target.querySelector(".field-error");
+      const out = e.target.querySelector(".ai-answer");
+      const btn = e.target.querySelector("button");
+      const prompt = $("#ai-prompt").value.trim();
+      if (!prompt) return;
+      err.textContent = "";
+      out.hidden = true;
+      btn.disabled = true;
+      btn.textContent = "답을 기다리는 중…";
+      try {
+        const r = await askAI(prompt);
+        out.innerHTML = `<small>${esc(AI_PROVIDERS[r.provider].name)}의 답</small><div>${esc(r.text).replace(/\n/g, "<br>")}</div>`;
+        out.hidden = false;
+      } catch (x) { err.textContent = x.message; }
+      finally { btn.disabled = false; btn.textContent = "보내기"; }
     });
   };
 

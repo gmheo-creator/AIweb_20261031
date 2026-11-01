@@ -132,6 +132,15 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 }
 .hero-inner { position: relative; text-align: left; max-width: 1120px; }
 .hero-inner > * { max-width: 760px; }
+/* 제목 그림 — 좁은 화면에서는 제목 위에 작게, 넓은 화면에서는 글 왼쪽 빈 공간에 크게 */
+.hero-art { display: block; width: 150px; margin: 0 0 22px; color: #fff; }
+.hero-art svg { display: block; width: 100%; height: auto; }
+@media (min-width: 1280px) {
+  .hero-art {
+    position: absolute; right: 790px; top: 50%; transform: translateY(-50%);
+    width: min(340px, 37vw - 260px); margin: 0;
+  }
+}
 .eyebrow {
   display: inline-block; margin: 0 0 22px;
   font-size: 13px; font-weight: 800; letter-spacing: .28em; text-transform: uppercase; color: #fff;
@@ -237,6 +246,19 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .stat > span { color: var(--ink-soft); font-size: 15px; font-weight: 500; }
 
 /* 장점 슬라이드 */
+/* 학습목표 */
+.objectives { margin-top: 64px; }
+.objectives h3 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.objectives-lead { color: var(--ink-soft); margin-bottom: 18px; }
+.objectives-list { list-style: none; counter-reset: obj; display: grid; gap: 14px; margin: 0; }
+.objectives-list li { counter-increment: obj; position: relative; padding-left: 44px; line-height: 1.7; }
+.objectives-list li::before {
+  content: counter(obj); position: absolute; left: 0; top: 0;
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--purple-100); color: var(--accent); font-weight: 800; font-size: 15px;
+}
+.objectives-list:hover { transform: none; }
+
 .slider { margin-top: 64px; }
 .slider-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
 .slider-head h3 { font-size: 22px; font-weight: 800; }
@@ -721,6 +743,13 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 }
 .popup-foot button + button { border-left: 1px solid var(--border); }
 .popup-foot button:hover { background: var(--pink-100); color: var(--ink); }
+/* 공지 팝업: 긴 글도 읽기 쉽게 왼쪽 정렬, 길면 창 안에서 스크롤 */
+.notice-popup .popup-body { text-align: left; max-height: min(70vh, 560px); overflow-y: auto; }
+.notice-popup .popup-art, .notice-popup h2 { text-align: center; }
+.notice-popup-item { border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 12px; }
+.notice-popup-item h3 { font-size: 16px; margin: 0 0 2px; }
+.notice-popup-item time { font-size: 13px; color: var(--ink-soft); }
+.notice-popup .notice-popup-item p { margin: 6px 0 0; white-space: pre-line; color: var(--ink); }
 
 /* 알림 토스트 · 폭죽 */
 .toast {
@@ -753,8 +782,15 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
   display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
   background: var(--purple-100); color: var(--accent); white-space: nowrap;
 }
-.pinned .notice-tag, .ap-notice-list .notice-tag:first-child:not(:only-child) { background: var(--pink-500); color: #fff; }
-.notice-more { margin-top: 8px; }
+.pinned .notice-tag { background: var(--pink-500); color: #fff; }
+.notice-pager { display: flex; justify-content: center; gap: 6px; margin-top: 12px; padding-top: 14px; border-top: 1px dashed var(--border); }
+.notice-pager button {
+  min-width: 34px; height: 34px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: #fff; color: var(--ink-soft); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.notice-pager button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.notice-pager button[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.notice-pager button:disabled { opacity: .4; cursor: default; }
 
 .preview-chip {
   position: fixed; left: 16px; bottom: 16px; z-index: 45; max-width: calc(100% - 96px);
@@ -822,6 +858,16 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .ap-card p { margin: 0; }
 .ap-steps { margin: 0; padding-left: 20px; font-size: 14px; color: var(--ink-soft); }
 .ap-card > .btn, .ap-card > .file-btn { justify-self: start; }
+/* AI API 키 */
+.ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0 16px; }
+.ai-state { margin-left: 6px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--pink-100); color: var(--ink-soft); }
+.ai-state.on { background: #e3f4ea; color: #1f7a4a; }
+.ai-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ap-card select { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font: inherit; background: #fff; }
+.ai-try > .btn { justify-self: start; }
+.ai-answer { background: var(--pink-50); border-radius: var(--radius-sm); padding: 14px; line-height: 1.7; font-size: 14px; }
+.ai-answer small { display: block; color: var(--ink-soft); margin-bottom: 6px; font-weight: 700; }
+
 .ap-loading, .ap-error { text-align: center; padding: 40px 10px; color: var(--ink-soft); }
 .ap-error .btn { margin-top: 12px; }
 .file-btn { cursor: pointer; }
@@ -854,7 +900,13 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .ap-notice-list p { margin: 6px 0 0; color: var(--ink-soft); font-size: 14px; white-space: pre-line; }
 .notice-form-row { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
 .notice-form-row .field { flex: 0 1 200px; }
-.notice-form-row .btn { margin-left: auto; }
+.notice-form-row .btn-primary { margin-left: auto; }
+.notice-form-row .btn-ghost + .btn-primary { margin-left: 0; }
+.notice-form.is-editing { outline: 2px solid var(--accent); outline-offset: -2px; }
+.ap-notice-list li.is-editing { border-color: var(--accent); }
+.ap-notice-list .notice-tag.is-pin { background: var(--pink-500); color: #fff; }
+.ap-notice-list .notice-tag.is-popup { background: var(--purple-100); color: var(--accent); }
+.ap-row-actions { flex-wrap: wrap; justify-content: flex-end; }
 
 /* 사이트 편집기 */
 .ed-layout { display: grid; grid-template-columns: 190px 1fr; gap: 18px; align-items: start; }
@@ -933,6 +985,9 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 .footer-body h2 { font-size: 28px; color: #fff; }
 .footer-body h2 span { font-size: 17px; font-weight: 500; color: #c9cde0; margin-left: 4px; }
 .affiliation { margin: 4px 0 14px; color: var(--purple-200); }
+.name-en { margin: 0 0 14px; color: #dde0ec; font-size: 15px; line-height: 1.6; }
+.name-en strong { display: block; margin-bottom: 2px; color: #fff; font-weight: 700; }
+.name-en span { display: block; }
 .bio { margin: 0 0 14px; color: #dde0ec; }
 .career { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .career li {
